@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AustroDrone · RPA Test Chile</title>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* === TOKENS === */
+:root{
+  --navy:#07091f;--navy2:#0b0e2a;--navy3:#0f1438;
+  --card:#111735;--card2:#172048;
+  --border:#1d2d5c;--border2:#2a4080;
+  --blue:#3b6fd4;--blue2:#5a8fff;--blue3:#8ab4ff;
+  --green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--orange:#f97316;
+  --white:#eef2ff;--text:#9ab0d8;--dim:#3d5080;
+  --sw:224px;
+  --r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Ubuntu',system-ui,sans-serif;background:var(--navy);color:var(--white);min-height:100vh;overflow-x:hidden;}
+
+/* === LAYOUT === */
+.app{display:flex;min-height:100vh;}
+
+/* === SIDEBAR === */
+.sidebar{
+  width:var(--sw);background:var(--navy2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;height:100vh;
+  z-index:100;transition:transform .3s;
+}
+.sb-logo{padding:18px 14px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;}
+.sb-img{width:44px;height:44px;border-radius:50%;flex-shrink:0;overflow:hidden;background:var(--navy3);}
+.sb-img img{width:100%;height:100%;object-fit:contain;}
+.sb-brand .b1{font-size:14px;font-weight:700;color:var(--white);letter-spacing:.5px;}
+.sb-brand .b2{font-size:10px;color:var(--blue2);font-weight:400;letter-spacing:1.5px;text-transform:uppercase;}
+.sidebar nav{flex:1;padding:12px 8px;overflow-y:auto;}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r);cursor:pointer;font-size:13.5px;font-weight:400;color:var(--dim);margin-bottom:1px;border:1px solid transparent;transition:all .18s;user-select:none;}
+.ni:hover{background:var(--card);color:var(--white);}
+.ni.active{background:rgba(59,111,212,.22);color:var(--blue2);border-color:rgba(59,111,212,.38);font-weight:500;}
+.ni svg{width:17px;height:17px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.sb-foot{padding:10px 12px;border-top:1px solid var(--border);}
+.sb-cert{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:9px 11px;text-align:center;}
+.sb-cert .c1{font-size:10px;font-weight:700;color:var(--blue2);letter-spacing:1px;margin-bottom:1px;}
+.sb-cert .c2{font-size:10px;color:var(--dim);}
+.sb-stars{color:var(--blue3);font-size:9px;margin-bottom:3px;letter-spacing:3px;}
+
+/* === MAIN === */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:56px;background:rgba(11,14,42,.97);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);}
+.tb-motto{font-size:11px;color:var(--dim);letter-spacing:2.5px;text-transform:uppercase;font-weight:400;}
+.tb-motto b{color:var(--blue2);}
+.tb-right{display:flex;align-items:center;gap:12px;}
+.prog-pill{background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;color:var(--blue2);display:flex;align-items:center;gap:7px;}
+.prog-pill .pp{font-size:15px;color:var(--white);}
+.hamburger{display:none;cursor:pointer;background:none;border:none;color:var(--white);}
+.hamburger svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+
+/* === SCREENS === */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* === HERO / INICIO === */
+.hero{
+  min-height:calc(100vh - 56px);
+  background:
+    linear-gradient(to bottom,rgba(7,9,31,.5) 0%,rgba(7,9,31,.88) 52%,var(--navy) 100%),
+    url('https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=1400&q=80') center 40%/cover no-repeat;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 22px;
+}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(59,111,212,.13);border:1px solid rgba(90,143,255,.3);border-radius:20px;font-size:11px;font-weight:500;letter-spacing:2px;color:var(--blue2);padding:4px 15px;margin-bottom:20px;text-transform:uppercase;}
+.hero-logo{margin-bottom:14px;width:80px;height:80px;border-radius:50%;overflow:hidden;box-shadow:0 0 32px rgba(90,143,255,.28);background:white;}
+.hero-logo img{width:100%;height:100%;object-fit:contain;}
+.hero h1{font-family:'Ubuntu',sans-serif;font-size:clamp(28px,5vw,52px);font-weight:700;text-align:center;line-height:1.06;margin-bottom:5px;letter-spacing:.5px;}
+.hero h1 .ha{color:var(--white);}
+.hero h1 .hr{color:var(--blue2);}
+.hero-tag{font-size:12px;color:var(--text);text-align:center;letter-spacing:3px;text-transform:uppercase;margin-bottom:9px;font-weight:300;}
+.flag{display:flex;align-items:center;gap:5px;margin-bottom:32px;}
+.fl{width:36px;height:2.5px;}
+.fl-b{background:#3b6fd4;}.fl-w{background:#dde5f5;}.fl-r{background:#c42b2b;}
+
+.slabel{font-size:11px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;font-weight:500;text-align:center;margin-bottom:10px;}
+.mode-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;width:100%;max-width:580px;margin-bottom:24px;}
+.mc{background:rgba(11,14,42,.84);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;cursor:pointer;transition:all .22s;display:flex;align-items:center;gap:14px;backdrop-filter:blur(6px);}
+.mc:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 7px 22px rgba(0,0,0,.5);}
+.mc.sel{border-color:var(--blue);background:rgba(59,111,212,.16);}
+.mc-ic{width:36px;height:36px;border-radius:9px;background:rgba(59,111,212,.14);border:1px solid rgba(59,111,212,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mc-ic svg{width:18px;height:18px;stroke:var(--blue2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.mc-info h3{font-size:13px;font-weight:700;color:var(--white);margin-bottom:1px;}
+.mc-info p{font-size:11px;color:var(--dim);}
+
+.q-sel{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;justify-content:center;}
+.q-btn{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;transition:all .18s;font-family:'Ubuntu',sans-serif;}
+.q-btn:hover,.q-btn.active{background:rgba(59,111,212,.2);border-color:var(--blue);color:var(--white);}
+
+.start-btn{background:linear-gradient(135deg,#1d3a9e,#3b6fd4);border:none;color:#fff;border-radius:12px;padding:14px 50px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Ubuntu',sans-serif;letter-spacing:.5px;box-shadow:0 4px 20px rgba(59,111,212,.42);}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(59,111,212,.54);}
+
+.hero-feats{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-top:32px;padding-top:26px;border-top:1px solid var(--border);width:100%;max-width:640px;}
+.hf{text-align:center;}
+.hf .hfi{width:36px;height:36px;margin:0 auto 7px;border-radius:9px;background:rgba(59,111,212,.12);border:1px solid rgba(59,111,212,.2);display:flex;align-items:center;justify-content:center;}
+.hf .hfi svg{width:18px;height:18px;stroke:var(--blue2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.hf .hft{font-size:12px;font-weight:700;color:var(--white);}
+.hf .hfs{font-size:10px;color:var(--dim);}
+
+/* footer strip */
+.foot-strip{border-top:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;background:var(--navy2);}
+.fi{display:flex;align-items:center;gap:7px;}
+.fi-ic{width:28px;height:28px;border-radius:7px;background:rgba(59,111,212,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.fi-ic svg{width:14px;height:14px;stroke:var(--blue2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.fi-t{font-size:11px;font-weight:700;color:var(--white);}
+.fi-s{font-size:10px;color:var(--dim);}
+.foot-logos{margin-left:auto;display:flex;gap:10px;align-items:center;}
+.foot-logo-img{width:40px;height:40px;border-radius:50%;overflow:hidden;background:white;border:1px solid var(--border);}
+.foot-logo-img img{width:100%;height:100%;object-fit:contain;}
+.foot-badge{border:1px solid var(--border);border-radius:7px;padding:5px 8px;font-size:9px;font-weight:700;color:var(--dim);text-align:center;line-height:1.5;}
+
+/* === QUIZ === */
+.qc{max-width:740px;margin:0 auto;padding:24px 20px 60px;}
+.q-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.q-back{display:flex;align-items:center;gap:6px;color:var(--text);font-size:13px;font-weight:500;cursor:pointer;background:none;border:1px solid var(--border);border-radius:8px;padding:6px 13px;font-family:'Ubuntu',sans-serif;transition:all .18s;}
+.q-back:hover{color:var(--white);border-color:var(--border2);}
+.q-back svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.q-mbadge{background:rgba(59,111,212,.16);border:1px solid rgba(90,143,255,.3);color:var(--blue2);border-radius:7px;font-size:11px;font-weight:700;padding:4px 11px;letter-spacing:1px;}
+
+/* progress */
+.q-prog{margin-bottom:20px;}
+.q-prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.q-counters{display:flex;align-items:baseline;gap:16px;}
+.q-pos{font-size:20px;font-weight:700;color:var(--white);}
+.q-pos span{font-size:13px;color:var(--dim);font-weight:400;}
+.q-answered{font-size:11px;font-weight:600;color:var(--text);background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:3px 9px;}
+.timer{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:var(--blue2);background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:5px 12px;}
+.timer svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+.timer.warn{color:var(--yellow);}
+.timer.crit{color:var(--red);animation:blink .8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.pbar-wrap{height:5px;background:var(--card2);border-radius:3px;overflow:hidden;}
+.pbar{height:100%;background:linear-gradient(90deg,#1d3a9e,#3b6fd4,#7ba8ff);border-radius:3px;transition:width .4s ease;}
+
+/* question card */
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:24px 24px 20px;margin-bottom:16px;}
+.q-ref{font-size:10px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:6px;font-family:'Ubuntu Mono',monospace;}
+.q-cat-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(59,111,212,.1);border:1px solid rgba(90,143,255,.18);color:var(--blue3);border-radius:5px;font-size:10px;font-weight:500;padding:2px 9px;margin-bottom:12px;}
+.q-text{font-size:15.5px;font-weight:500;line-height:1.68;color:var(--white);white-space:pre-wrap;}
+
+/* options */
+.opts{display:flex;flex-direction:column;gap:8px;}
+.opt{background:var(--card2);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;cursor:pointer;transition:all .18s;display:flex;align-items:flex-start;gap:12px;font-size:14px;color:var(--text);line-height:1.5;}
+.opt:hover:not(.dis){border-color:var(--border2);background:rgba(42,64,128,.28);color:var(--white);}
+.opt-l{width:26px;height:26px;flex-shrink:0;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--dim);transition:all .18s;font-family:'Ubuntu Mono',monospace;margin-top:1px;}
+.opt-txt{flex:1;}
+/* states */
+.opt.sel-only{border-color:var(--blue);background:rgba(59,111,212,.12);color:var(--white);}
+.opt.sel-only .opt-l{background:var(--blue);border-color:var(--blue);color:#fff;}
+.opt.ok{border-color:var(--green);background:rgba(34,197,94,.1);color:var(--white);}
+.opt.ok .opt-l{background:var(--green);border-color:var(--green);color:#fff;}
+.opt.err{border-color:var(--red);background:rgba(239,68,68,.1);}
+.opt.err .opt-l{background:var(--red);border-color:var(--red);color:#fff;}
+.opt.dis{cursor:default;}
+
+/* feedback */
+.fb{margin-top:13px;padding:12px 16px;border-radius:9px;font-size:13px;line-height:1.65;display:none;}
+.fb.show{display:block;}
+.fb.ok-fb{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.22);color:#86efac;}
+.fb.err-fb{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.22);color:#fca5a5;}
+.fb .fb-lbl{font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.fb .fb-lbl svg{width:15px;height:15px;flex-shrink:0;}
+.fb .fb-ref{font-size:11px;color:var(--dim);margin-top:5px;display:flex;align-items:center;gap:5px;}
+.fb .fb-ref svg{width:12px;height:12px;stroke:var(--blue2);fill:none;stroke-width:2;}
+
+/* nav */
+.q-nav{display:flex;gap:10px;align-items:center;margin-top:16px;}
+.btn{border-radius:9px;padding:10px 20px;font-size:14px;font-weight:500;cursor:pointer;transition:all .18s;font-family:'Ubuntu',sans-serif;display:flex;align-items:center;gap:7px;border:none;}
+.btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.btn-g{background:var(--card2);border:1px solid var(--border);color:var(--text);}
+.btn-g:hover{border-color:var(--border2);color:var(--white);}
+.btn-p{background:linear-gradient(135deg,#1d3a9e,#3b6fd4);color:#fff;box-shadow:0 3px 12px rgba(59,111,212,.3);}
+.btn-p:hover{box-shadow:0 5px 18px rgba(59,111,212,.42);transform:translateY(-1px);}
+.btn-d{background:var(--card2);border:1px solid rgba(239,68,68,.4);color:#fca5a5;}
+.btn-d:hover{background:rgba(239,68,68,.1);}
+.btn-s{background:linear-gradient(135deg,#15803d,#22c55e);color:#fff;}
+.sp{flex:1;}
+.btn:disabled{opacity:.38;cursor:not-allowed;transform:none !important;}
+
+/* === RESULTS === */
+.resc{max-width:820px;margin:0 auto;padding:24px 20px 60px;}
+.res-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.res-hdr h2{font-size:19px;font-weight:700;}
+.res-hdr-btns{display:flex;gap:8px;}
+.res-hero{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:24px;margin-bottom:18px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;}
+.res-big{font-size:56px;font-weight:700;line-height:1;}
+.res-big.pass{color:var(--green);}
+.res-big.fail{color:var(--red);}
+.res-v{display:inline-block;border-radius:5px;font-size:11px;font-weight:700;letter-spacing:1px;padding:3px 10px;margin:4px 0 6px;text-transform:uppercase;}
+.res-v.pass{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3);}
+.res-v.fail{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3);}
+.res-req{font-size:12px;color:var(--dim);}
+.res-stats{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;}
+.sbox{text-align:center;}
+.sbox .sv{font-size:26px;font-weight:700;}
+.sbox .sl{font-size:11px;color:var(--dim);margin-top:1px;}
+.sbox.c .sv{color:var(--green);}
+.sbox.w .sv{color:var(--red);}
+.sbox.s .sv{color:var(--yellow);}
+.sbox.t .sv{color:var(--blue2);}
+.donut{display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;}
+.donut svg{transform:rotate(-90deg);}
+.donut-lbl{position:absolute;font-size:13px;font-weight:700;color:var(--white);text-align:center;line-height:1.3;}
+.donut-lbl .dp{font-size:20px;font-weight:700;}
+.donut-lbl .ds{font-size:10px;color:var(--dim);}
+
+.res-tabs{display:flex;gap:2px;margin-bottom:13px;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:3px;}
+.rtab{flex:1;padding:7px 10px;text-align:center;font-size:13px;font-weight:500;color:var(--dim);cursor:pointer;border-radius:7px;transition:all .18s;}
+.rtab.active{background:rgba(59,111,212,.2);color:var(--blue2);}
+
+/* review items */
+.rev-item{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:7px;overflow:hidden;}
+.rev-hdr{display:flex;align-items:center;gap:10px;padding:12px 15px;cursor:pointer;}
+.rev-icon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rev-icon svg{width:14px;height:14px;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.rev-icon.ok{background:rgba(34,197,94,.15);stroke:var(--green);}
+.rev-icon.ok svg{stroke:var(--green);}
+.rev-icon.skip{background:rgba(245,158,11,.15);}
+.rev-icon.skip svg{stroke:var(--yellow);}
+.rev-icon.err{background:rgba(239,68,68,.15);}
+.rev-icon.err svg{stroke:var(--red);}
+.rev-meta{flex:1;min-width:0;}
+.rev-qid{font-size:10px;font-weight:700;color:var(--blue);margin-bottom:2px;font-family:'Ubuntu Mono',monospace;}
+.rev-txt{font-size:13px;font-weight:500;color:var(--white);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rev-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;flex-shrink:0;}
+.rev-badge.c{background:rgba(34,197,94,.15);color:var(--green);}
+.rev-badge.w{background:rgba(239,68,68,.15);color:var(--red);}
+.rev-badge.s{background:rgba(245,158,11,.15);color:var(--yellow);}
+.chev{color:var(--dim);margin-left:5px;font-size:16px;transition:transform .2s;}
+.rev-item.open .chev{transform:rotate(90deg);}
+.rev-body{padding:0 15px 12px;display:none;border-top:1px solid var(--border);}
+.rev-body.open{display:block;padding-top:10px;}
+.rev-ans{font-size:12px;color:var(--text);margin-bottom:5px;}
+.rev-ans strong{color:var(--white);}
+.rev-exp{font-size:12px;color:var(--dim);line-height:1.6;padding:9px 12px;background:var(--navy3);border-radius:7px;margin-top:6px;}
+.rev-ref{font-size:10px;color:var(--blue2);margin-top:5px;display:flex;align-items:center;gap:4px;}
+.rev-ref svg{width:12px;height:12px;stroke:var(--blue2);fill:none;stroke-width:2;}
+
+/* cat stats */
+.cat-r{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:9px;margin-bottom:7px;}
+.cat-n{flex:1;font-size:13px;font-weight:500;}
+.cat-bw{width:100px;height:5px;background:var(--navy);border-radius:3px;overflow:hidden;}
+.cat-b{height:100%;border-radius:3px;}
+.cat-p{font-size:12px;font-weight:700;width:32px;text-align:right;}
+.res-acts{display:flex;gap:9px;margin-top:16px;flex-wrap:wrap;}
+.tip-box{margin-top:13px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.tip-box .tip-ic{width:32px;height:32px;border-radius:8px;background:rgba(59,111,212,.14);border:1px solid rgba(59,111,212,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tip-box .tip-ic svg{width:16px;height:16px;stroke:var(--blue2);fill:none;stroke-width:1.8;}
+
+/* === STATS === */
+.pgc{max-width:720px;margin:0 auto;padding:24px 20px 60px;}
+.pg-t{font-size:21px;font-weight:700;margin-bottom:16px;}
+.streak-c{background:linear-gradient(135deg,rgba(59,111,212,.14),rgba(123,168,255,.07));border:1px solid rgba(59,111,212,.28);border-radius:12px;padding:15px 18px;display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.streak-ic{width:44px;height:44px;border-radius:10px;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.22);display:flex;align-items:center;justify-content:center;}
+.streak-ic svg{width:22px;height:22px;stroke:var(--yellow);fill:none;stroke-width:1.8;}
+.s-n{font-size:28px;font-weight:700;color:var(--yellow);}
+.s-l{font-size:13px;color:var(--dim);}
+.st-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.st-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:15px;text-align:center;}
+.st-card .sv{font-size:28px;font-weight:700;color:var(--blue2);}
+.st-card .sl{font-size:11px;color:var(--dim);margin-top:3px;}
+.h-item{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:7px;}
+.h-date{font-size:11px;color:var(--dim);min-width:76px;}
+.h-mode{font-size:12px;color:var(--blue3);font-weight:500;flex:1;}
+.h-pct{font-size:16px;font-weight:700;min-width:44px;text-align:right;}
+.h-pct.p{color:var(--green);}
+.h-pct.f{color:var(--red);}
+.section-lbl{font-size:11px;font-weight:700;margin-bottom:9px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;}
+.empty{text-align:center;padding:52px 20px;color:var(--dim);}
+.empty-ic{width:56px;height:56px;border-radius:14px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.empty-ic svg{width:26px;height:26px;stroke:var(--dim);fill:none;stroke-width:1.5;}
+
+/* === CATS === */
+.cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.cat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:15px 17px;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:12px;}
+.cat-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.cc-ic{width:36px;height:36px;border-radius:9px;background:rgba(59,111,212,.12);border:1px solid rgba(59,111,212,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cc-ic svg{width:18px;height:18px;stroke:var(--blue2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.cc-info h3{font-size:13px;font-weight:700;color:var(--white);margin-bottom:1px;}
+.cc-info p{font-size:11px;color:var(--dim);}
+.cc-n{margin-left:auto;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:3px 9px;font-size:12px;font-weight:700;color:var(--blue2);}
+
+/* === SETTINGS === */
+.set-row{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:7px;}
+.set-info{flex:1;}
+.set-t{font-size:14px;font-weight:500;margin-bottom:2px;}
+.set-s{font-size:12px;color:var(--dim);}
+.tog{width:40px;height:22px;background:var(--border);border-radius:11px;position:relative;cursor:pointer;transition:background .18s;flex-shrink:0;border:none;}
+.tog::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:3px;left:3px;transition:left .18s;}
+.tog.on{background:var(--blue);}
+.tog.on::after{left:21px;}
+.danger-zone{margin-top:20px;padding:16px 18px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:9px;}
+.danger-zone h4{font-size:13px;font-weight:700;color:#fca5a5;margin-bottom:6px;}
+.danger-zone p{font-size:12px;color:var(--dim);margin-bottom:12px;}
+
+/* === MODAL === */
+.modal-ov{position:fixed;inset:0;background:rgba(7,9,31,.88);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-ov.show{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:24px;max-width:400px;width:100%;}
+.modal h3{font-size:17px;font-weight:700;margin-bottom:7px;}
+.modal p{font-size:14px;color:var(--text);margin-bottom:18px;}
+.modal-btns{display:flex;gap:9px;}
+
+/* === RESPONSIVE === */
+@media(max-width:768px){
+  :root{--sw:0px;}
+  .sidebar{transform:translateX(-224px);width:224px;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .hamburger{display:flex;}
+  .mode-grid,.cat-grid{grid-template-columns:1fr;}
+  .st-grid{grid-template-columns:repeat(2,1fr);}
+  .res-hero{grid-template-columns:1fr;}
+  .donut{display:none;}
+  .foot-logos{display:none;}
+}
+@media(max-width:480px){.st-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- MODAL -->
+<div class="modal-ov" id="modal-ov">
+  <div class="modal">
+    <h3>Terminar prueba</h3>
+    <p>Las preguntas sin responder contarán como incorrectas. ¿Confirmas que deseas terminar?</p>
+    <div class="modal-btns">
+      <button class="btn btn-g" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-d" onclick="confirmEnd()">Sí, terminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-img"><img src="data:image/png;base64,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" alt="AustroDrone"></div>
+    <div class="sb-brand"><div class="b1">AUSTRODRONE</div><div class="b2">RPA Test Chile</div></div>
+  </div>
+  <nav>
+    <div class="ni active" data-s="inicio" onclick="nav('inicio')">
+      <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>Inicio
+    </div>
+    <div class="ni" data-s="quiz" onclick="nav('quiz')" id="nav-quiz" style="display:none">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>Prueba
+    </div>
+    <div class="ni" data-s="resultados" onclick="nav('resultados')" id="nav-res" style="display:none">
+      <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Resultados
+    </div>
+    <div class="ni" data-s="estadisticas" onclick="nav('estadisticas')">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Estadísticas
+    </div>
+    <div class="ni" data-s="categorias" onclick="nav('categorias')">
+      <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Categorías
+    </div>
+    <div class="ni" data-s="historial" onclick="nav('historial')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial
+    </div>
+    <div class="ni" data-s="ajustes" onclick="nav('ajustes')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Ajustes
+    </div>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-cert">
+      <div class="sb-stars">✦ ✦ ✦ ✦</div>
+      <div class="c1">DGAC · CHILE · AOC N°1908</div>
+      <div class="c2">Empresa Aérea Certificada</div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <button class="hamburger" onclick="toggleSb()">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="tb-motto">ENTRENA <b>·</b> APRENDE <b>·</b> VUELA SEGURO</div>
+    <div class="tb-right">
+      <div class="prog-pill" id="prog-pill" style="display:none">
+        <span id="pill-pct" class="pp">0%</span>
+        <span style="color:var(--dim);font-size:10px">Progreso</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ INICIO ═══ -->
+  <section class="screen active" id="screen-inicio">
+    <div class="hero">
+      <div class="hero-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        DGAC · Chile · Normativa DAN 151 / DAN 91
+      </div>
+      <div class="hero-logo">
+        <img src="data:image/png;base64,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" alt="AustroDrone">
+      </div>
+      <h1><span class="ha">AUSTRO</span><span class="hr">DRONE</span><br><span style="font-size:.5em;color:var(--text);letter-spacing:5px;font-weight:300">RPA TEST CHILE</span></h1>
+      <div class="hero-tag">Entrena · Aprende · Vuela Seguro</div>
+      <div class="flag"><div class="fl fl-b"></div><div class="fl fl-w"></div><div class="fl fl-r"></div></div>
+
+      <div class="slabel">Modo de estudio</div>
+      <div class="mode-grid">
+        <div class="mc sel" data-mode="practica" onclick="selMode('practica')">
+          <div class="mc-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg></div>
+          <div class="mc-info"><h3>Modo Práctica</h3><p>Retroalimentación inmediata</p></div>
+        </div>
+        <div class="mc" data-mode="examen" onclick="selMode('examen')">
+          <div class="mc-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="mc-info"><h3>Modo Examen</h3><p>Sin retroalimentación hasta el final</p></div>
+        </div>
+        <div class="mc" data-mode="falladas" onclick="selMode('falladas')">
+          <div class="mc-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+          <div class="mc-info"><h3>Preguntas Falladas</h3><p>Repasa tus errores anteriores</p></div>
+        </div>
+        <div class="mc" data-mode="aleatorio" onclick="selMode('aleatorio')">
+          <div class="mc-ic"><svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg></div>
+          <div class="mc-info"><h3>Aleatorio</h3><p>Selección mixta de preguntas</p></div>
+        </div>
+      </div>
+
+      <div class="slabel">Número de preguntas</div>
+      <div class="q-sel">
+        <button class="q-btn active" data-q="10" onclick="selQ(10)">10<span style="font-size:10px;opacity:.5;margin-left:5px">Rápida</span></button>
+        <button class="q-btn" data-q="25" onclick="selQ(25)">25<span style="font-size:10px;opacity:.5;margin-left:5px">Intermedia</span></button>
+        <button class="q-btn" data-q="50" onclick="selQ(50)">50<span style="font-size:10px;opacity:.5;margin-left:5px">Avanzada</span></button>
+        <button class="q-btn" data-q="100" onclick="selQ(100)">100<span style="font-size:10px;opacity:.5;margin-left:5px">Completa</span></button>
+      </div>
+      <button class="start-btn" onclick="startQuiz()">
+        Iniciar prueba
+      </button>
+
+      <div class="hero-feats">
+        <div class="hf">
+          <div class="hfi"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+          <div class="hft">Actualizado</div><div class="hfs">DAN 151 / DAN 91</div>
+        </div>
+        <div class="hf">
+          <div class="hfi"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="hft">Entrena Seguro</div><div class="hfs">Mejora tu conocimiento</div>
+        </div>
+        <div class="hf">
+          <div class="hfi"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+          <div class="hft">Mide tu Progreso</div><div class="hfs">Estadísticas y análisis</div>
+        </div>
+        <div class="hf">
+          <div class="hfi"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+          <div class="hft">Tu Objetivo</div><div class="hfs">Operador RPA certificado</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot-strip">
+      <div class="fi">
+        <div class="fi-ic"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div><div class="fi-t">Entrena seguro</div><div class="fi-s">Mejora tu conocimiento</div></div>
+      </div>
+      <div class="fi">
+        <div class="fi-ic"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+        <div><div class="fi-t">Actualizado</div><div class="fi-s">DAN 151 / DAN 91</div></div>
+      </div>
+      <div class="fi">
+        <div class="fi-ic"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <div><div class="fi-t">Mide tu progreso</div><div class="fi-s">Estadísticas y análisis</div></div>
+      </div>
+      <div class="fi">
+        <div class="fi-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+        <div><div class="fi-t">Tu objetivo</div><div class="fi-s">Operador RPA certificado</div></div>
+      </div>
+      <div class="foot-logos">
+        <div class="foot-logo-img"><img src="data:image/png;base64,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" alt="AustroDrone"></div>
+        <div class="foot-badge">DGAC<br>CHILE<br>AOC N°1908</div>
+        <div class="foot-badge">🇨🇱<br>DGAC<br>CHILE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ QUIZ ═══ -->
+  <section class="screen" id="screen-quiz">
+    <div class="qc">
+      <div class="q-hdr">
+        <button class="q-back" onclick="askEnd()">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Volver al inicio
+        </button>
+        <div class="q-mbadge" id="q-mbadge">PRÁCTICA</div>
+      </div>
+      <div class="q-prog">
+        <div class="q-prog-row">
+          <div class="q-counters">
+            <div class="q-pos"><span id="q-cur">1</span><span> / <span id="q-tot">10</span></span></div>
+            <div class="q-answered" id="q-answered">0 respondidas</div>
+          </div>
+          <div class="timer" id="timer" style="display:none">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="t-txt">60:00</span>
+          </div>
+        </div>
+        <div class="pbar-wrap"><div class="pbar" id="pbar" style="width:0%"></div></div>
+      </div>
+      <div class="q-card">
+        <div class="q-ref" id="q-id">Q001</div>
+        <div class="q-cat-tag" id="q-cat">Categoría</div>
+        <div class="q-text" id="q-txt">Cargando...</div>
+      </div>
+      <div class="opts" id="opts"></div>
+      <div class="fb" id="fb"></div>
+      <div class="q-nav">
+        <button class="btn btn-g" id="btn-prev" onclick="prevQ()">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Anterior
+        </button>
+        <div class="sp"></div>
+        <button class="btn btn-d" onclick="askEnd()">Terminar</button>
+        <button class="btn btn-p" id="btn-next" onclick="nextQ()">
+          Siguiente<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ RESULTADOS ═══ -->
+  <section class="screen" id="screen-resultados">
+    <div class="resc">
+      <div class="res-hdr">
+        <h2>Resultado</h2>
+        <div class="res-hdr-btns">
+          <button class="btn btn-g" style="padding:7px 13px;font-size:13px" onclick="nav('inicio')">
+            <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/></svg>Inicio
+          </button>
+          <button class="btn btn-p" style="padding:7px 13px;font-size:13px" onclick="retryFailed()">
+            <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.58"/></svg>Solo incorrectas
+          </button>
+        </div>
+      </div>
+      <div class="res-hero">
+        <div>
+          <div class="res-big" id="r-pct">0%</div>
+          <div class="res-v" id="r-v">—</div>
+          <div class="res-req" id="r-req">Necesitas 75% para aprobar</div>
+          <div class="res-stats">
+            <div class="sbox c"><div class="sv" id="r-ok">0</div><div class="sl">Correctas</div></div>
+            <div class="sbox w"><div class="sv" id="r-err">0</div><div class="sl">Incorrectas</div></div>
+            <div class="sbox s"><div class="sv" id="r-skip">0</div><div class="sl">Omitidas</div></div>
+            <div class="sbox t"><div class="sv" id="r-tot">0</div><div class="sl">Total</div></div>
+          </div>
+        </div>
+        <div class="donut">
+          <svg width="96" height="96" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#1a2d50" stroke-width="10"/>
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#3b6fd4" stroke-width="10"
+              stroke-dasharray="251.2" stroke-dashoffset="251.2"
+              id="donut-arc" stroke-linecap="round" style="transition:stroke-dashoffset .8s ease"/>
+          </svg>
+          <div class="donut-lbl"><div class="dp" id="d-pct">0%</div><div class="ds">Tu<br>rendimiento</div></div>
+        </div>
+      </div>
+
+      <div class="res-tabs">
+        <div class="rtab active" onclick="switchTab('rev')">Revisión de respuestas</div>
+        <div class="rtab" onclick="switchTab('cats')">Por categoría</div>
+      </div>
+      <div id="tab-rev"></div>
+      <div id="tab-cats" style="display:none"></div>
+
+      <div class="res-acts">
+        <button class="btn btn-p" onclick="startQuiz()">
+          <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Nueva prueba
+        </button>
+        <button class="btn btn-g" onclick="retryFailed()">
+          <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.58"/></svg>Solo incorrectas
+        </button>
+        <button class="btn btn-g" onclick="nav('estadisticas')">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Estadísticas
+        </button>
+      </div>
+
+      <div class="tip-box">
+        <div class="tip-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+        <div style="flex:1"><div style="font-size:13px;font-weight:700;margin-bottom:2px">Recomendación</div><div style="font-size:12px;color:var(--dim)" id="r-tip">Repasa las preguntas incorrectas.</div></div>
+        <button class="btn btn-p" style="padding:7px 13px;font-size:12px" onclick="retryFailed()">Practicar incorrectas</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ESTADÍSTICAS ═══ -->
+  <section class="screen" id="screen-estadisticas">
+    <div class="pgc">
+      <div class="pg-t">Mis estadísticas</div>
+      <div class="streak-c">
+        <div class="streak-ic"><svg viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div>
+        <div><div class="s-n" id="streak-n">0</div><div class="s-l">Días consecutivos estudiando</div></div>
+      </div>
+      <div class="st-grid">
+        <div class="st-card"><div class="sv" id="st-tot">0</div><div class="sl">Pruebas realizadas</div></div>
+        <div class="st-card"><div class="sv" id="st-avg">—</div><div class="sl">Promedio general</div></div>
+        <div class="st-card"><div class="sv" id="st-best">—</div><div class="sl">Mejor resultado</div></div>
+      </div>
+      <div class="section-lbl">Historial reciente</div>
+      <div id="st-hist"></div>
+    </div>
+  </section>
+
+  <!-- ═══ CATEGORÍAS ═══ -->
+  <section class="screen" id="screen-categorias">
+    <div class="pgc">
+      <div class="pg-t">Estudiar por categoría</div>
+      <div class="cat-grid" id="cat-grid"></div>
+    </div>
+  </section>
+
+  <!-- ═══ HISTORIAL ═══ -->
+  <section class="screen" id="screen-historial">
+    <div class="pgc">
+      <div class="pg-t">Historial de pruebas</div>
+      <div id="hist-list"></div>
+    </div>
+  </section>
+
+  <!-- ═══ AJUSTES ═══ -->
+  <section class="screen" id="screen-ajustes">
+    <div class="pgc">
+      <div class="pg-t">Ajustes</div>
+      <div class="set-row">
+        <div class="set-info"><div class="set-t">Temporizador en Modo Examen</div><div class="set-s">Activa el cronómetro de 60 minutos</div></div>
+        <button class="tog on" id="tog-timer" onclick="togSet('timer')"></button>
+      </div>
+      <div class="set-row">
+        <div class="set-info"><div class="set-t">Mostrar ID de pregunta</div><div class="set-s">Muestra el número de referencia (Q001…)</div></div>
+        <button class="tog on" id="tog-qid" onclick="togSet('qid')"></button>
+      </div>
+      <div class="danger-zone">
+        <h4>Zona de peligro</h4>
+        <p>Esta acción borrará permanentemente todo el historial de pruebas, estadísticas y preguntas falladas.</p>
+        <button class="btn btn-d" onclick="clearData()">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>Borrar todos los datos
+        </button>
+      </div>
+    </div>
+  </section>
+
+</main>
+</div>
+<script>
+// ═══════════════════════════════════════════
+// BANCO DE PREGUNTAS
+// Estructura: id, prompt, options, answerIndex,
+//             category, subcategory, explanation,
+//             reference, difficulty (1-3)
+// ═══════════════════════════════════════════
+const QUESTIONS = [
+{id:"Q001",prompt:"Al aumentar la altura, la densidad del aire disminuye.",options:["Verdadero","Falso"],answerIndex:0,category:"Meteorología",subcategory:"Atmósfera",explanation:"Al aumentar la altitud, la densidad del aire disminuye por la menor presión atmosférica. Esto afecta la sustentación, el rendimiento y los motores en aviación.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q002",prompt:"Previo al inicio de un vuelo será responsabilidad del operador de un RPA determinar si la aeronave y su sistema de control se encuentran en condiciones seguras para operar.",options:["Verdadero","Falso"],answerIndex:0,category:"Operación",subcategory:"Preflight",explanation:"El operador debe verificar aeronave y sistema de control antes de cada vuelo para garantizar seguridad, conforme a normativa.",reference:"DAN 151",difficulty:1},
+{id:"Q003",prompt:"¿Cuáles son los pasos a seguir para obtener permiso de vuelo con RPAS sobre área poblada con centros urbanos y asentamientos habitacionales/laborales?",options:["Sólo con el permiso del dueño del lugar","Permiso del dueño y luego informar al Centro de Control de Tránsito Aéreo","Enviar formulario de solicitud de autorización de vuelo indicando el objetivo según DAN 119, carta del propietario, KMZ del área y documentación del registro y credencial de operador"],answerIndex:2,category:"Normativa",subcategory:"Permisos",explanation:"Se requiere: formulario con objetivo según DAN 119 en concordancia al AOC, carta del propietario, KMZ del área y registros/credencial.",reference:"DAN 119 / DAN 151",difficulty:2},
+{id:"Q004",prompt:"Dentro de los requisitos técnicos exigidos a un RPA está:",options:["La aeronave debe haber sido construida de un kit de fábrica y contar con instructivos técnicos de operación.","Puede ser armado de piezas de diferentes fabricantes sin instructivos técnicos.","Contar sólo con motores eléctricos."],answerIndex:0,category:"Normativa",subcategory:"Requisitos técnicos",explanation:"Se exige que el RPA provenga de kit de fábrica y disponga de instructivos técnicos de operación para asegurar trazabilidad.",reference:"DAN 151",difficulty:2},
+{id:"Q005",prompt:"Durante la operación de una aeronave pilotada a distancia quedará prohibido:\nI. Operar en zonas prohibidas y zonas peligrosas publicadas por la DGAC\nII. Operar más de un RPA en forma simultánea\nIII. Vulnerar la privacidad e intimidad de las personas",options:["Sólo I","Sólo I y II","Sólo I y III","I, II y III"],answerIndex:3,category:"Normativa",subcategory:"Prohibiciones",explanation:"Quedan prohibidas: I) operar en zonas prohibidas/peligrosas; II) operar más de un RPA simultáneamente; III) vulnerar privacidad e intimidad de las personas.",reference:"DAN 151",difficulty:1},
+{id:"Q006",prompt:"El camino seguido por una aeronave durante su desplazamiento por el aire, se denomina:",options:["Aerovía.","Viento relativo.","Trayectoria de vuelo.","Trayectoria."],answerIndex:2,category:"Aerodinámica",subcategory:"Conceptos básicos",explanation:"El camino real que sigue la aeronave en el aire se llama Trayectoria de vuelo.",reference:"Manual de Aerodinámica DGAC",difficulty:1},
+{id:"Q007",prompt:"El movimiento alrededor del eje lateral, se denomina:",options:["Alabeo.","Cabeceo.","Pérdida.","Ganancia."],answerIndex:1,category:"Aerodinámica",subcategory:"Ejes de vuelo",explanation:"El movimiento de la aeronave alrededor del eje lateral se denomina Cabeceo (pitch). El alabeo es el movimiento alrededor del eje longitudinal.",reference:"Manual de Aerodinámica DGAC",difficulty:1},
+{id:"Q008",prompt:"El operador de un RPA podrá traspasar el control de una aeronave en vuelo a otro piloto sólo si está coordinado y las condiciones meteorológicas lo permiten.",options:["Verdadero","Falso"],answerIndex:1,category:"Normativa",subcategory:"Operación",explanation:"No está permitido traspasar el control de un RPA en vuelo a otro piloto, aunque exista coordinación o condiciones favorables. La normativa lo prohíbe expresamente.",reference:"DAN 151",difficulty:2},
+{id:"Q009",prompt:"El peso máximo de despegue de un RPA de acuerdo a la norma DAN 151 debe ser de hasta:",options:["6 kilos","8 kilos","9 kilos","7 kilos"],answerIndex:2,category:"DAN 151",subcategory:"Requisitos técnicos",explanation:"La norma DAN 151 establece que el peso máximo de despegue de un RPA no debe exceder los 9 kilos.",reference:"DAN 151, Sección técnica",difficulty:1},
+{id:"Q010",prompt:"El viento es originado por una diferencia de presiones que tienden a igualarse.",options:["Verdadero","Falso"],answerIndex:0,category:"Meteorología",subcategory:"Viento",explanation:"El viento se produce por diferencias de presión atmosférica: el aire se desplaza de zonas de alta presión hacia zonas de baja presión para igualarlas.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q011",prompt:"El Código Penal Art. 161-A establece la sanción para quien captura imágenes o comunicaciones privadas sin autorización:",options:["Con presidio menor","Sólo una multa según la infracción","Con reclusión menor en cualquiera de sus grados y multa de 50 a 500 UTM","Una multa determinada por la sección infraccional de la DGAC"],answerIndex:2,category:"Normativa",subcategory:"Código Penal",explanation:"El Art. 161-A del Código Penal establece la sanción de reclusión menor en cualquiera de sus grados más multa de 50 a 500 UTM para quien capture imágenes o comunicaciones privadas sin autorización.",reference:"Código Penal, Art. 161-A",difficulty:2},
+{id:"Q012",prompt:"El Art. 81 del Código Aeronáutico establece: 'Ninguna persona podrá oponerse al sobrevuelo de una aeronave en razón de sus derechos sobre el suelo.'",options:["Verdadero","Falso"],answerIndex:0,category:"Normativa",subcategory:"Código Aeronáutico",explanation:"El artículo 81 del Código Aeronáutico establece expresamente que los derechos sobre el suelo no permiten oponerse al sobrevuelo autorizado de aeronaves.",reference:"Código Aeronáutico, Art. 81",difficulty:1},
+{id:"Q013",prompt:"En un vuelo recto y nivelado, sin aceleración o deceleración, las fuerzas que están equilibradas son:",options:["La sustentación igual al empuje.","La sustentación distinta al empuje.","La sustentación distinta al peso.","La sustentación igual al peso."],answerIndex:3,category:"Aerodinámica",subcategory:"Fuerzas de vuelo",explanation:"En vuelo recto y nivelado, la sustentación equilibra al peso y el empuje equilibra a la resistencia (arrastre).",reference:"Manual de Aerodinámica DGAC",difficulty:1},
+{id:"Q014",prompt:"Es la operación en la cual la tripulación remota mantiene contacto visual directo con la aeronave para dirigir su vuelo y satisfacer las responsabilidades de separación y anticolisión:",options:["Operación de vuelo","Operación con visibilidad directa visual (VLOS)","Operación más allá de la visibilidad directa visual (BVLOS)","Operación visual"],answerIndex:1,category:"DAN 151",subcategory:"Definiciones operacionales",explanation:"Se denomina Operación con visibilidad directa visual (VLOS) cuando el piloto mantiene contacto visual directo con la aeronave en todo momento.",reference:"DAN 151",difficulty:1},
+{id:"Q015",prompt:"METAR SCVD 211400Z 12003KT 4000 VCFG BKN 020 04/03 Q1026 NOSIG. La dirección e intensidad del viento es:",options:["020 grados con 04 nudos","211 grados con 40 nudos","120 grados con 03 nudos","040 grados con 03 nudos"],answerIndex:2,category:"METAR",subcategory:"Interpretación de viento",explanation:"En el METAR, '12003KT' se lee: dirección 120 grados y velocidad 3 nudos.",reference:"Claves METAR OACI",difficulty:2},
+{id:"Q016",prompt:"Será responsabilidad del operador de un RPA mantener la separación con otros RPA operando en el área y coordinado entre sí.",options:["Verdadero","Falso"],answerIndex:0,category:"DAN 151",subcategory:"Responsabilidades del operador",explanation:"La normativa obliga a que los operadores mantengan la separación y coordinación con otros RPAS en operación en el área.",reference:"DAN 151",difficulty:1},
+{id:"Q017",prompt:"La altura máxima de operación de un RPA según la DAN 151 es:",options:["400 pies","400 metros","450 pies","120 pies"],answerIndex:0,category:"DAN 151",subcategory:"Límites operacionales",explanation:"La normativa establece una altura máxima de 400 pies AGL para la operación de RPAS, salvo autorización especial de la DGAC.",reference:"DAN 151",difficulty:1},
+{id:"Q018",prompt:"La brisa marina está originada por:",options:["El oleaje del mar.","El amanecer y el atardecer del día.","La mayor humedad de la superficie del mar.","La diferencia térmica entre el mar y la tierra."],answerIndex:3,category:"Meteorología",subcategory:"Viento",explanation:"La brisa marina es producto de la diferencia térmica entre el mar y la tierra: durante el día la tierra se calienta más, generando un flujo desde el mar hacia tierra.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q019",prompt:"La cancelación de un vuelo RPA ya autorizado no deberá ser comunicado a la DGAC.",options:["Verdadero","Falso"],answerIndex:1,category:"Normativa",subcategory:"Procedimientos",explanation:"Toda cancelación de vuelo RPA autorizado debe ser comunicada a la DGAC. La afirmación es falsa.",reference:"DAN 151",difficulty:1},
+{id:"Q020",prompt:"La credencial de RPA permite al portador:",options:["Desempeñarse como operador de RPAS solo en condiciones VLOS.","Desempeñarse como operador de RPAS en condición BVLOS.","Desempeñarse como operador de RPAS en cualquier condición.","A y B."],answerIndex:0,category:"DAN 151",subcategory:"Credencial",explanation:"La credencial de operador de RPAS habilita únicamente para operaciones en condiciones VLOS (dentro de la línea visual).",reference:"DAN 151",difficulty:1},
+{id:"Q021",prompt:"La DAN 151 autoriza las operaciones con RPAS sobre áreas pobladas, ya sea en ámbitos de asuntos de interés público o trabajos aéreos.",options:["Verdadero","Falso"],answerIndex:0,category:"DAN 151",subcategory:"Operaciones en áreas pobladas",explanation:"La DAN 151 contempla operaciones sobre áreas pobladas siempre que sean de interés público o trabajos aéreos autorizados.",reference:"DAN 151",difficulty:1},
+{id:"Q022",prompt:"La definición de 'Aeronave pilotada a distancia' es: Aeronave que no lleva a bordo un piloto a los mandos.",options:["Verdadero","Falso"],answerIndex:0,category:"Definiciones",subcategory:"RPAS",explanation:"Un RPA es una aeronave que se opera sin piloto a bordo, controlada de forma remota desde una estación de control.",reference:"DAN 151",difficulty:1},
+{id:"Q023",prompt:"La definición de 'Áreas pobladas' es:",options:["Zonas destinadas para espectáculos de congregación masiva de personas.","Zonas en las que se desarrollen actividades que convoquen la aglomeración de personas al aire libre.","Terrenos destinados para ser habitados por poblaciones humanas.","Zonas en las que existan centros urbanos o se desarrollen actividades que convoquen aglomeración de personas al aire libre."],answerIndex:3,category:"Definiciones",subcategory:"Espacio aéreo",explanation:"Se consideran áreas pobladas aquellas donde existen centros urbanos o actividades que generan concentración de personas al aire libre.",reference:"DAN 151",difficulty:1},
+{id:"Q024",prompt:"La definición de NOTAM: Aviso distribuido por telecomunicaciones con información relativa a instalaciones aeronáuticas, servicios, procedimientos o peligros, cuyo conocimiento oportuno es esencial para el personal de operaciones de vuelo.",options:["Verdadero","Falso"],answerIndex:0,category:"Definiciones",subcategory:"Publicaciones aeronáuticas",explanation:"Un NOTAM es una notificación aeronáutica oficial distribuida por telecomunicaciones para alertar sobre condiciones que afectan la seguridad del vuelo.",reference:"OACI / DGAC / AIP Chile",difficulty:1},
+{id:"Q025",prompt:"'Persona designada por el explotador para operar los controles de vuelo de una aeronave pilotada a distancia durante el tiempo de vuelo', corresponde al concepto de:",options:["Piloto","Explorador","Piloto a distancia","Explotador a distancia"],answerIndex:2,category:"Definiciones",subcategory:"RPAS",explanation:"El 'Piloto a distancia' es el responsable de la operación de vuelo de un RPA según la definición normativa.",reference:"DAN 151",difficulty:1},
+{id:"Q026",prompt:"'Una operación durante la cual una aeronave pilotada a distancia vuela sin intervención de piloto en la gestión de vuelo', corresponde al concepto de:",options:["Operación restringida","Operación con visibilidad directa visual","Operación en gestión de vuelo","Operación autónoma"],answerIndex:3,category:"Definiciones",subcategory:"Tipos de operación",explanation:"Se denomina operación autónoma cuando el RPA ejecuta el vuelo sin intervención activa del piloto en la gestión de vuelo.",reference:"DAN 151",difficulty:1},
+{id:"Q027",prompt:"La diferencia entre niebla y neblina radica en que la primera presenta una visibilidad menor de 1000 metros y la segunda mayor de 1000 metros.",options:["Verdadero","Falso"],answerIndex:0,category:"Meteorología",subcategory:"Visibilidad",explanation:"La niebla se caracteriza por reducir la visibilidad a menos de 1000 m, mientras que la neblina (mist) permite visibilidades entre 1000 m y 5000 m.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q028",prompt:"La dirección de la brisa marina por la noche es:",options:["Del mar hacia la tierra","Paralelo a la costa","Relativa","De la tierra hacia el mar"],answerIndex:3,category:"Meteorología",subcategory:"Viento",explanation:"Durante la noche la tierra se enfría más rápido que el mar, generando un flujo de aire desde la tierra (más fría) hacia el mar (más cálido).",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q029",prompt:"La niebla se distingue de la bruma por la humedad y color gris.",options:["Verdadero","Falso"],answerIndex:0,category:"Meteorología",subcategory:"Visibilidad",explanation:"La niebla presenta mayor concentración de humedad, aspecto grisáceo y visibilidad inferior a 1 km, a diferencia de la bruma.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q030",prompt:"La niebla se forma cuando:",options:["Existe aire húmedo y gran densidad","Las nubes descienden hasta el nivel del suelo","El aire se enfría por debajo de su punto de rocío","Las nubes se enfrían por debajo de su punto de rocío"],answerIndex:2,category:"Meteorología",subcategory:"Visibilidad",explanation:"La niebla se produce cuando el aire se enfría por debajo de su punto de rocío, lo que provoca la condensación del vapor de agua en pequeñas gotas suspendidas.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q031",prompt:"METAR SCVD 211400Z 12003KT 0500 VCFG BKN 020 04/03 Q1026 NOSIG. La visibilidad es de:",options:["1400 metros","500 metros","0.5 MN","Ninguna de las anteriores"],answerIndex:1,category:"METAR",subcategory:"Visibilidad",explanation:"En el METAR, el valor '0500' indica visibilidad de 500 metros. Los valores de visibilidad en METAR se expresan en metros.",reference:"Claves METAR OACI",difficulty:2},
+{id:"Q032",prompt:"METAR SCVD 211400Z 12003KT 0500 VCFG BKN 020 04/03 Q1026 NOSIG. La temperatura del punto de rocío es:",options:["5 grados","4 grados","3 grados","Ninguna de las anteriores"],answerIndex:2,category:"METAR",subcategory:"Temperatura",explanation:"En la clave METAR, el grupo '04/03' indica temperatura de aire 4°C y temperatura del punto de rocío 3°C.",reference:"Claves METAR OACI",difficulty:2},
+{id:"Q033",prompt:"La sustentación es:",options:["La fuerza hacia arriba perpendicular al viento relativo y desarrollada para soportar el peso de la aeronave.","La fuerza aerodinámica más la resistencia parásita.","La fuerza perpendicular al viento relativo para realizar la tracción de la aeronave.","La fuerza aerodinámica que soporta el peso de la aeronave."],answerIndex:0,category:"Aerodinámica",subcategory:"Fuerzas de vuelo",explanation:"La sustentación es una fuerza aerodinámica perpendicular al viento relativo que equilibra el peso de la aeronave.",reference:"Manual de Aerodinámica DGAC",difficulty:1},
+{id:"Q034",prompt:"La temperatura a la cual se alcanza el punto de saturación del vapor de agua, se denomina:",options:["Punto de saturación","Punto de rocío","Temperatura de ebullición","Temperatura de saturación"],answerIndex:1,category:"Meteorología",subcategory:"Humedad",explanation:"El 'punto de rocío' es la temperatura a la que el aire alcanza la saturación de vapor de agua y comienza la condensación.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q035",prompt:"El ángulo de ataque es:",options:["El ángulo formado entre la cuerda aerodinámica y la dirección del viento relativo.","El ángulo con el cual sube más deprisa el avión.","El ángulo formado entre el horizonte y el viento relativo.","El ángulo formado entre el borde de fuga y el viento relativo."],answerIndex:0,category:"Aerodinámica",subcategory:"Perfil alar",explanation:"El ángulo de ataque es el ángulo entre la línea de cuerda del perfil alar y la dirección del viento relativo. Determina la sustentación generada.",reference:"Manual de Aerodinámica DGAC",difficulty:1},
+{id:"Q036",prompt:"La turbulencia mecánica se crea:",options:["Por las térmicas de calor","Por las ráfagas de viento","Por el rozamiento del aire con la superficie","Por la relación entre ráfagas de viento y térmicas de calor"],answerIndex:2,category:"Meteorología",subcategory:"Turbulencia",explanation:"La turbulencia mecánica es causada por la fricción del aire con la superficie terrestre y obstáculos físicos (edificios, árboles, orografía).",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:2},
+{id:"Q037",prompt:"Los RPA sólo se podrán operar en línea vista (VLOS).",options:["Verdadero","Falso"],answerIndex:1,category:"DAN 151",subcategory:"Tipos de operación",explanation:"La normativa permite operaciones más allá de la línea visual (BVLOS) bajo condiciones específicas y con autorización especial de la DGAC.",reference:"DAN 151",difficulty:1},
+{id:"Q038",prompt:"Sanciones establecidas en el Código Aeronáutico, Art. 185:\nI. Amonestación escrita\nII. Multas\nIII. Suspensión de permisos y licencias hasta por 3 años\nIV. Cancelación definitiva de permisos y licencias",options:["Sólo I, II y IV","Sólo II y IV","Sólo I, II y III","I, II, III y IV"],answerIndex:3,category:"Normativa",subcategory:"Sanciones",explanation:"El Art. 185 del Código Aeronáutico contempla las cuatro sanciones: amonestación escrita, multas, suspensión hasta 3 años y cancelación definitiva.",reference:"Código Aeronáutico, Art. 185",difficulty:2},
+{id:"Q039",prompt:"Ninguna aeronave pilotada a distancia se utilizará sobre el __________ de otro estado sin la previa __________ especial concedida por ese estado.",options:["Derecho, convalidación","Territorio, convalidación","Derecho, autorización","Territorio, autorización"],answerIndex:3,category:"Normativa",subcategory:"Legislación internacional",explanation:"Según el Convenio de Chicago, ningún RPA puede operar sobre el territorio de otro estado sin la autorización especial de ese estado.",reference:"Convenio de Chicago, Art. 8",difficulty:2},
+{id:"Q040",prompt:"No se podrá operar un RPA a:",options:["Menos de 2,5 km del eje de la pista y a 2 km paralelo","Menos de 1 km del eje de la pista y a 500 m paralelo","Menos de 1,5 km del eje de la pista y a 1 km paralelo","A menos de 2 km de la prolongación del eje de pista (desde el umbral) y a menos de 1 km paralelo al eje de la pista de un aeródromo"],answerIndex:3,category:"DAN 151",subcategory:"Separación de aeródromos",explanation:"Por seguridad operacional, está prohibido operar RPA dentro de estas distancias respecto a pistas de aeródromos.",reference:"DAN 151",difficulty:2},
+{id:"Q041",prompt:"Para la correcta planificación de un vuelo de RPAS, el operador deberá:\nI. Verificar IFIS/NOTAMs vigentes\nII. Verificar METAR/TAF del área de operación\nIII. Identificar aeródromos cercanos y zonas de espacio aéreo aplicables\nIV. Avisar a la municipalidad correspondiente",options:["Sólo I y IV","Sólo I, II y IV","Sólo I, II y III","I, II, III y IV"],answerIndex:2,category:"Operación",subcategory:"Planificación",explanation:"Planificar implica revisar IFIS/NOTAMs, METAR/TAF e identificar aeródromos y espacio aéreo. Avisar a la municipalidad no es un requisito normativo.",reference:"DAN 151 / AIP Chile",difficulty:2},
+{id:"Q042",prompt:"Para que la formación de niebla sea probable, debe existir:",options:["Nubes en altura y corrientes descendentes de aire húmedo","Fuerte viento y alta humedad relativa a nivel del suelo","Alta humedad, temperatura y punto de rocío próximo y viento en calma","Nubes en altura y fuerte viento"],answerIndex:2,category:"Meteorología",subcategory:"Visibilidad",explanation:"La niebla se forma cuando la humedad es alta, la temperatura se acerca al punto de rocío y existe viento en calma (que impide la dispersión).",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q043",prompt:"Para un vuelo recreacional en área poblada no se requiere permiso de la DGAC:",options:["Si la aeronave es de polietileno expandido, no importando su peso","Si la aeronave es de polietileno expandido y el peso máximo es de 750 gramos","Sólo si la aeronave es de polietileno expandido (plumavit)","Sólo si pesa menos de 750 gramos"],answerIndex:1,category:"DAN 91",subcategory:"Vuelos recreativos",explanation:"No se requiere permiso si la aeronave es de polietileno expandido (plumavit) o material equivalente y no supera los 750 gramos.",reference:"DAN 91",difficulty:1},
+{id:"Q044",prompt:"¿Qué es necesario para que se produzcan precipitaciones?",options:["Que la temperatura ambiente sea elevada","Que la presión atmosférica sea alta","Que el aire esté saturado","Que el aire esté contaminado"],answerIndex:2,category:"Meteorología",subcategory:"Precipitaciones",explanation:"Para que se generen precipitaciones el aire debe alcanzar la saturación, lo que permite la condensación y formación de gotas de agua.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q045",prompt:"¿Qué se entiende por seguridad operacional?",options:["Estado en que el riesgo de lesiones o daños se reduce y mantiene en un nivel aceptable mediante un proceso continuo de identificación de peligros y gestión de riesgos","Estado en que el riesgo de lesiones se aumenta y no se mantiene en un nivel aceptable","Concepto que sólo se ocupa en Chile respecto a la seguridad de las aeronaves","Parámetro de seguridad basado en datos para evaluar el rendimiento en materia de seguridad"],answerIndex:0,category:"Seguridad Operacional",subcategory:"Conceptos",explanation:"La seguridad operacional es el estado en que los riesgos se reducen a niveles aceptables mediante gestión continua de peligros y riesgos (SMS).",reference:"OACI Doc 9859 / DGAC",difficulty:2},
+{id:"Q046",prompt:"La definición de Nivel Aceptable de Seguridad Operacional (ALOS):",options:["Nivel o criterio establecido fuera del intervalo normal que dispara una alerta de evaluación","Nivel mínimo de rendimiento en materia de seguridad operacional expresado en términos de objetivos e indicadores","Análisis permanente de los acontecimientos al interior del proveedor de servicios aeronáuticos","Objetivos de mediano y largo plazo relacionados con el nivel aceptable de la seguridad operacional"],answerIndex:1,category:"Seguridad Operacional",subcategory:"Indicadores",explanation:"El ALOS es el nivel mínimo de rendimiento en materia de seguridad operacional expresado en objetivos e indicadores de seguridad.",reference:"OACI Doc 9859 / DGAC",difficulty:2},
+{id:"Q047",prompt:"Se define como ráfaga:",options:["El valor de la intensidad del viento cuando es constante.","La turbulencia creada por la intensidad del viento.","La turbulencia creada al sotavento de una montaña.","El valor máximo de la intensidad del viento cuando no es constante."],answerIndex:3,category:"Meteorología",subcategory:"Viento",explanation:"Una ráfaga (gust) corresponde al valor máximo de la intensidad del viento cuando no es constante. Se reporta en METAR con la letra G (ej: 18015G25KT).",reference:"Manual de Meteorología Aeronáutica DGAC / Claves METAR",difficulty:1},
+{id:"Q048",prompt:"Se dice que el aire está saturado cuando:",options:["No se puede comprimir más.","No admite mayor cantidad de vapor de agua.","Su tensión de vapor es mínima.","Presenta máxima densidad."],answerIndex:1,category:"Meteorología",subcategory:"Humedad",explanation:"El aire está saturado cuando no puede contener más vapor de agua, lo que corresponde a una humedad relativa del 100%.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q049",prompt:"Se dice que el viento es constante cuando:",options:["Unas veces lleva un sentido y en otras otro.","Su acción es constante y en la misma dirección.","Su acción es constante, pero puede variar su dirección.","Se desplaza en una sola dirección."],answerIndex:1,category:"Meteorología",subcategory:"Viento",explanation:"El viento es constante cuando mantiene la misma intensidad y la misma dirección sostenidamente en el tiempo.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q050",prompt:"Si un ciudadano se siente vulnerado en su privacidad e intimidad por el sobrevuelo de un RPAS, ¿a quiénes puede denunciar?",options:["Seguridad pública de la comuna, inspectores municipales.","Policía de Investigaciones.","Carabineros de Chile y el Juzgado de Policía Local.","Sólo la DGAC."],answerIndex:2,category:"Normativa",subcategory:"Derechos ciudadanos",explanation:"La denuncia por vulneración de privacidad por RPAS debe hacerse ante Carabineros de Chile y el Juzgado de Policía Local correspondiente.",reference:"DAN 91",difficulty:2},
+{id:"Q051",prompt:"Toda aeronave pilotada a distancia, previo a realizar cualquier operación de vuelo, deberá contar con la autorización de:",options:["El Departamento Aeródromos y Servicios Aeronáuticos","La Junta Aeronáutica Civil","La Dirección General de Aeronáutica Civil","La Fuerza Aérea de Chile"],answerIndex:2,category:"Normativa",subcategory:"Autorización",explanation:"La DGAC (Dirección General de Aeronáutica Civil) es la autoridad competente para autorizar operaciones de aeronaves pilotadas a distancia en Chile.",reference:"DAN 151 / Código Aeronáutico",difficulty:1},
+{id:"Q052",prompt:"Las causas principales que originan las turbulencias son:",options:["Corrientes convectivas","Obstrucciones al flujo del viento","Cortante del viento","Todas las anteriores"],answerIndex:3,category:"Meteorología",subcategory:"Turbulencia",explanation:"Las turbulencias pueden generarse por corrientes convectivas (térmicas), obstrucciones físicas (turbulencia mecánica) y cortante del viento (wind shear).",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q053",prompt:"Toda persona que se encuentre operando un RPA deberá portar:",options:["Registro del RPA, póliza de seguro o resolución de la JAC, autorización de la DGAC, certificado AOC o CEO y las EEOO","Sólo la autorización de operación de RPAS otorgada por la DGAC","Registro del RPA, credencial de operador RPAS, póliza de seguro o resolución de la JAC, autorización de la DGAC, certificado AOC o CEO y las EEOO","Registro del RPA, credencial de operador RPAS, autorización de la DGAC, certificado AOC o CEO y las EEOO"],answerIndex:2,category:"Normativa",subcategory:"Documentación",explanation:"El operador debe portar todos los documentos exigidos: registro, credencial, póliza o resolución JAC, autorización DGAC, certificado AOC/CEO y Especificaciones de Operación (EEOO).",reference:"DAN 151",difficulty:2},
+{id:"Q054",prompt:"Tras un reclamo de un ciudadano, bajo qué circunstancia se podría requisar el RPA al operador:",options:["Si la DGAC lo estima conveniente a través de su Departamento Jurídico","Si lo sorprende Carabineros en el acto","Sólo tras la autorización del fiscal al funcionario policial, en presencia de un hecho constitutivo de posible delito","Sólo por un inspector de la DGAC"],answerIndex:2,category:"Normativa",subcategory:"Legal",explanation:"El RPA sólo puede ser requisado tras autorización del fiscal al funcionario policial y únicamente en presencia de un hecho que pudiese ser constitutivo de delito.",reference:"Código Aeronáutico / DAN 151",difficulty:2},
+{id:"Q055",prompt:"'Espacio aéreo de dimensiones definidas sobre el territorio o las aguas jurisdiccionales de Chile dentro del cual está prohibido el vuelo de aeronaves por razones de seguridad nacional'. Se denomina:",options:["Zona restringida","Zona peligrosa","Zona insegura","Zona prohibida"],answerIndex:3,category:"Espacio Aéreo",subcategory:"Clasificación de zonas",explanation:"La definición corresponde a Zona Prohibida (P), donde el vuelo de aeronaves está absolutamente prohibido por razones de seguridad nacional.",reference:"DAN 91 / OACI",difficulty:1},
+{id:"Q056",prompt:"Un operador de RPA podrá operar en áreas restringidas:",options:["Cuando lo estime necesario para la operación","Cuando cuente con autorización de la autoridad competente","A y B son correctas","Cuando esté en una situación de emergencia"],answerIndex:1,category:"Normativa",subcategory:"Espacio aéreo",explanation:"El operador sólo puede volar en áreas restringidas cuando cuenta con la autorización expresa de la autoridad competente.",reference:"DAN 151",difficulty:2},
+{id:"Q057",prompt:"Un RPA debe operar en condiciones meteorológicas de vuelo visual (VMC), en contacto visual directo permanente con el RPA (VLOS) y ser controlado en forma manual por el operador en todas las etapas del vuelo.",options:["Verdadero","Falso"],answerIndex:0,category:"DAN 151",subcategory:"Condiciones de operación",explanation:"La normativa exige que los RPA operen en condiciones VMC y dentro de la línea de vista directa (VLOS), con control manual por el operador en todas las fases del vuelo.",reference:"DAN 151",difficulty:1},
+{id:"Q058",prompt:"Un RPA es la aeronave del sistema RPAS.",options:["Verdadero","Falso"],answerIndex:0,category:"Definiciones",subcategory:"RPAS",explanation:"Dentro del sistema RPAS (Remotely Piloted Aircraft System), el RPA (Remotely Piloted Aircraft) corresponde a la aeronave propiamente tal.",reference:"DAN 151",difficulty:1},
+{id:"Q059",prompt:"Un vuelo de carácter recreacional lo podemos ejecutar en:",options:["En la vía pública con cualquier RPA y sin autorización de la DGAC","En la vía pública con permiso de la DGAC y con cualquier modelo de RPA","En zona no poblada, con la autorización formal de la DGAC hasta 400 pies","En lugar privado, que no opere a más de 50 metros de altura y con un peso inferior a 750 gramos"],answerIndex:3,category:"DAN 91",subcategory:"Vuelos recreativos",explanation:"Los vuelos recreativos sólo se permiten en lugares privados, a menos de 50 m de altura y con aeronaves de menos de 750 g, sin necesidad de autorización de la DGAC.",reference:"DAN 91",difficulty:1},
+{id:"Q060",prompt:"Viento relativo es:",options:["El formado por la hélice al pasar por el perfil alar","La corriente de aire que sigue a la aeronave en su trayectoria","La corriente o flujo de aire moviéndose hacia el perfil, siendo opuesto a la trayectoria de vuelo","El formado por el aspa al pasar por el perfil alar"],answerIndex:2,category:"Aerodinámica",subcategory:"Conceptos básicos",explanation:"El viento relativo es el flujo de aire que se mueve en sentido opuesto a la trayectoria de vuelo de la aeronave. Es el que genera la sustentación.",reference:"Manual de Aerodinámica DGAC",difficulty:1},
+{id:"Q061",prompt:"Zona peligrosa (D) es:",options:["Espacio aéreo dentro del cual está prohibido el vuelo de aeronaves por razones de seguridad nacional.","Espacio aéreo de dimensiones definidas en el cual pueden desplegarse en determinados momentos actividades peligrosas para el vuelo de las aeronaves.","Espacio aéreo dentro del cual está restringido el vuelo de las aeronaves de acuerdo con determinadas condiciones especificadas.","Ninguna de las anteriores."],answerIndex:1,category:"Espacio Aéreo",subcategory:"Clasificación de zonas",explanation:"Una zona peligrosa (D - Danger) es un espacio aéreo donde pueden desarrollarse actividades peligrosas para el vuelo en momentos determinados, aunque el vuelo no está prohibido.",reference:"DAN 91 / OACI",difficulty:2},
+{id:"Q062",prompt:"Si aumentamos el ángulo de ataque en un perfil alar, la sustentación:",options:["Aumentará.","Disminuirá.","Se mantendrá igual.","No cambia."],answerIndex:0,category:"Aerodinámica",subcategory:"Perfil alar",explanation:"Al aumentar el ángulo de ataque, la sustentación aumenta hasta llegar al ángulo crítico (entrada en pérdida), donde la sustentación cae abruptamente.",reference:"Manual de Aerodinámica DGAC",difficulty:1},
+{id:"Q063",prompt:"La fuerza aerodinámica es:",options:["La fuerza paralela al viento relativo.","La fuerza resultante de la sustentación y la resistencia inducida.","La fuerza resultante de la fuerza centrífuga y el peso.","La fuerza resultante de la sustentación y el peso de la aeronave."],answerIndex:1,category:"Aerodinámica",subcategory:"Fuerzas de vuelo",explanation:"La fuerza aerodinámica total es la resultante vectorial de la sustentación y la resistencia inducida (arrastre inducido).",reference:"Manual de Aerodinámica DGAC",difficulty:2},
+{id:"Q064",prompt:"La resistencia inducida es:",options:["La que se produce debido a la sustentación.","La que proporciona mayor velocidad a la aeronave.","La suma de la gravedad más la resistencia parásita.","La que se produce debido al peso de la aeronave."],answerIndex:0,category:"Aerodinámica",subcategory:"Resistencia",explanation:"La resistencia inducida es un subproducto inevitable de la generación de sustentación por las alas.",reference:"Manual de Aerodinámica DGAC",difficulty:2},
+{id:"Q065",prompt:"La fuerza en dirección perpendicular hacia la superficie de la Tierra se denomina:",options:["Empuje o tracción","Sustentación","Peso o gravedad","Ninguna de las anteriores"],answerIndex:2,category:"Aerodinámica",subcategory:"Fuerzas de vuelo",explanation:"La fuerza perpendicular hacia el centro de la Tierra corresponde al peso o gravedad.",reference:"Manual de Aerodinámica DGAC",difficulty:1},
+{id:"Q066",prompt:"La capa de la atmósfera en la cual se desarrollan las actividades de los RPAS, se denomina:",options:["Estratosfera","Troposfera","Tropopausa","Exosfera"],answerIndex:1,category:"Meteorología",subcategory:"Atmósfera",explanation:"Las operaciones de RPAS se realizan en la Troposfera, la capa más baja de la atmósfera donde ocurren los fenómenos meteorológicos.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q067",prompt:"Gradiente vertical de temperatura se define como:",options:["La variación de la temperatura con la altura","El cambio de temperatura a lo largo del día","La variación de presión con la temperatura","El cambio de la dirección del viento con la altura"],answerIndex:0,category:"Meteorología",subcategory:"Atmósfera",explanation:"El gradiente vertical de temperatura corresponde a la variación de la temperatura con la altura. En la troposfera estándar es de -6,5°C por cada 1000 m.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q068",prompt:"El viento fluye de zonas de baja presión a zonas de alta presión.",options:["Verdadero","Falso"],answerIndex:1,category:"Meteorología",subcategory:"Viento",explanation:"El viento fluye desde zonas de ALTA presión hacia zonas de BAJA presión, no al revés.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q069",prompt:"La temperatura de la atmósfera estándar a nivel del mar es de:",options:["25°C","15°C","50°C","0°C"],answerIndex:1,category:"Meteorología",subcategory:"Atmósfera estándar",explanation:"Según la Atmósfera Estándar Internacional (ISA), la temperatura a nivel del mar es de 15°C (59°F).",reference:"ICAO Standard Atmosphere (ISA) / OACI Doc 7488",difficulty:1},
+{id:"Q070",prompt:"La niebla se forma cuando el aire se enfría por debajo de su punto de rocío.",options:["Verdadero","Falso"],answerIndex:0,category:"Meteorología",subcategory:"Visibilidad",explanation:"La niebla se produce cuando el aire se enfría por debajo de su punto de rocío, generando condensación de vapor de agua en gotas suspendidas.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q071",prompt:"Obstrucciones tales como edificios, árboles y terrenos abruptos, obstaculizan el paso del viento y lo convierten en un flujo turbulento con complejos remolinos.",options:["Verdadero","Falso"],answerIndex:0,category:"Meteorología",subcategory:"Turbulencia",explanation:"Los obstáculos físicos generan turbulencia mecánica al interferir con el flujo laminar del viento.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q072",prompt:"La turbulencia térmica está asociada a un fenómeno convectivo.",options:["Verdadero","Falso"],answerIndex:0,category:"Meteorología",subcategory:"Turbulencia",explanation:"La turbulencia térmica ocurre por el calentamiento desigual de la superficie terrestre, que genera corrientes convectivas ascendentes y descendentes.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:1},
+{id:"Q073",prompt:"La nube más peligrosa para desarrollar el vuelo es:",options:["Ns (Nimbostratus)","Cb (Cumulonimbus)","Sc (Stratocumulus)","Ci (Cirrus)"],answerIndex:1,category:"Meteorología",subcategory:"Nubes",explanation:"El Cumulonimbus (Cb) es la nube más peligrosa para la aviación: genera tormentas eléctricas, granizo, turbulencia severa, corrientes verticales extremas y engelamiento.",reference:"Manual de Meteorología Aeronáutica DGAC",difficulty:2},
+{id:"Q074",prompt:"METAR SCFA 141200Z VRB02KT 9999 NSC 12/11 Q1015 NOSIG. La visibilidad y la nubosidad reportadas son respectivamente:",options:["Superior a 10 km y no significativa","Inferior a 10 km y escasa","Reducida y abundante","9 km y despejado"],answerIndex:0,category:"METAR",subcategory:"Visibilidad y nubosidad",explanation:"El código '9999' indica visibilidad mayor a 10 km y 'NSC' (No Significant Clouds) indica que no hay nubes significativas.",reference:"Claves METAR OACI",difficulty:2},
+{id:"Q075",prompt:"METAR SCRD 151700Z VRB01KT 0400 FG OVC002 15/15 Q1015. El fenómeno que reduce la visibilidad y el techo son respectivamente:",options:["Niebla y 200 pies","Niebla y 600 metros","Neblina y 20 metros","Humo y 200 pies"],answerIndex:0,category:"METAR",subcategory:"Visibilidad y nubes",explanation:"FG indica niebla (fog). OVC002 indica techo nublado total (overcast) a 200 pies (002 × 100 = 200 pies).",reference:"Claves METAR OACI",difficulty:2},
+{id:"Q076",prompt:"METAR SCAT 161500Z 20008KT 180V240 7000 SKC 15/09 Q1019. Los datos de viento informado son:",options:["230 grados con 3 nudos y arrachado","Calma, cambiando a variable","200 grados con 8 nudos, fluctuando entre los 180 grados y los 240 grados","200 grados con 3 nudos y variable"],answerIndex:2,category:"METAR",subcategory:"Viento",explanation:"'20008KT' indica viento de 200° a 8 nudos. '180V240' indica que la dirección varía entre 180° y 240°.",reference:"Claves METAR OACI",difficulty:2},
+{id:"Q077",prompt:"METAR SCVD 211400Z 12003KT 4000 VCFG BKN020 04/03 Q1026. La visibilidad está restringida por:",options:["Niebla","Niebla baja","Niebla en la vecindad","Niebla en bancos"],answerIndex:2,category:"METAR",subcategory:"Fenómenos",explanation:"El código 'VCFG' (Vicinity Fog) indica niebla en la vecindad, es decir, entre 8 y 16 km del aeródromo.",reference:"Claves METAR OACI",difficulty:1},
+{id:"Q078",prompt:"METAR SCCI 160800Z 29014G24KT 9999 FEW013 01/M03 Q0985 NOSIG. ¿Cuál es la racha máxima del viento informado?",options:["29 KT","24 KT","14 KT","01 KT"],answerIndex:1,category:"METAR",subcategory:"Viento",explanation:"'29014G24KT' se lee: viento de 290° a 14 nudos con rachas (G = Gust) de hasta 24 nudos.",reference:"Claves METAR OACI",difficulty:2},
+{id:"Q079",prompt:"En METAR, la abreviatura NIL significa:",options:["Estación cerrada temporalmente","Instrumentos fuera de servicio","Reparación de instalaciones en curso","Estación ausente o no disponible / sin observación"],answerIndex:3,category:"METAR",subcategory:"Abreviaturas",explanation:"La clave NIL se utiliza para indicar que no hay observación disponible en esa estación en ese momento.",reference:"Claves METAR OACI",difficulty:1},
+{id:"Q080",prompt:"METAR SCIE 161500Z 02005KT CAVOK 12/07 Q1018. La abreviatura CAVOK determina que la visibilidad, el tiempo presente y las nubes son respectivamente:",options:["Ilimitada; sin precipitaciones; sin CB ni nubes bajo la altitud mínima del sector","Superior a 5 km; despejado; sin CB","Superior a 10 km; no hay nubes significativas ni CB bajo 5000 pies","Ilimitada y despejado sin nubes"],answerIndex:2,category:"METAR",subcategory:"CAVOK",explanation:"CAVOK (Ceiling And Visibility OK) indica: visibilidad superior a 10 km, sin nubes por debajo de 5000 pies ni CB, y sin precipitaciones o fenómenos significativos.",reference:"Claves METAR OACI",difficulty:2},
+{id:"Q081",prompt:"La abreviatura BCFG usada en claves meteorológicas del METAR significa:",options:["Niebla (Fog)","Niebla baja (Low Fog)","Niebla en la vecindad (Vicinity Fog)","Niebla en bancos (Patchy Fog)"],answerIndex:3,category:"METAR",subcategory:"Abreviaturas",explanation:"BCFG (Banco de niebla / Bancos de Fog) corresponde a niebla en bancos discontinuos, no cubre toda el área.",reference:"Claves METAR OACI",difficulty:1},
+{id:"Q082",prompt:"El Art. 82 del Código Aeronáutico prohíbe vuelos y sobrevuelos de RPAS de cualquier peso de despegue sobre:",options:["Áreas densamente pobladas como centros urbanos o similares","Instalaciones militares, unidades de flota y bases aéreas de las FFAA, además de instalaciones carcelarias e instalaciones estratégicas definidas por el Estado de Chile","Aglomeración de personas al aire libre como conciertos o festivales","Parques nacionales y áreas protegidas"],answerIndex:1,category:"Normativa",subcategory:"Código Aeronáutico",explanation:"El Art. 82 del Código Aeronáutico prohíbe expresamente los vuelos de RPAS sobre instalaciones militares, carcelarias y estratégicas del Estado.",reference:"Código Aeronáutico, Art. 82",difficulty:2},
+{id:"Q083",prompt:"En caso de incumplimiento de la normativa aeronáutica, la DGAC aplica el procedimiento infraccional establecido en:",options:["DAR 13","DAR 06","DAR 51","DAR 61"],answerIndex:2,category:"Normativa",subcategory:"Infracciones",explanation:"El DAR 51 (Reglamento de Procedimiento Infraccional Aeronáutico) regula los procedimientos sancionatorios en caso de incumplimiento de la normativa.",reference:"DAR 51",difficulty:1},
+{id:"Q084",prompt:"¿Cuál de las siguientes afirmaciones NO está prohibida según la DAN 91?",options:["Poner en riesgo la vida e integridad de las personas.","Poner en riesgo la propiedad pública o privada.","Operar en forma descuidada o temeraria, poniendo en riesgo a otras aeronaves.","Operar fuera de áreas pobladas con autorización de la DGAC."],answerIndex:3,category:"DAN 91",subcategory:"Prohibiciones",explanation:"La operación fuera de áreas pobladas con autorización de la DGAC está permitida. Las otras tres opciones están expresamente prohibidas por la DAN 91.",reference:"DAN 91",difficulty:2},
+{id:"Q085",prompt:"¿Cuál es un requisito fundamental para operar en áreas pobladas según la norma DAN 151?",options:["El peso máximo del RPA debe ser de hasta 19 kg incluyendo accesorios.","El RPA debe haber sido armado desde diferentes kits de distintos fabricantes.","El RPA debe contar con paracaídas de emergencia durante su operación.","El RPA debe ser volado solo en forma autónoma."],answerIndex:2,category:"DAN 151",subcategory:"Operaciones en áreas pobladas",explanation:"Para operar en áreas pobladas, la norma DAN 151 exige que el RPA cuente con un sistema de paracaídas de emergencia homologado.",reference:"DAN 151",difficulty:2},
+{id:"Q086",prompt:"La autorización emitida por la DGAC para operar en áreas pobladas según la DAN 151 tiene una validez de ____ meses:",options:["6","2","3","12"],answerIndex:0,category:"DAN 151",subcategory:"Autorizaciones",explanation:"La autorización para operar en áreas pobladas tiene una vigencia de 6 meses según lo estipulado en la DAN 151.",reference:"DAN 151",difficulty:1},
+{id:"Q087",prompt:"¿Quién es el responsable de la conducción segura de las operaciones de acuerdo con la normativa DAN 151?",options:["El explotador de la empresa","El dueño de la empresa","La DGAC","El piloto a distancia"],answerIndex:3,category:"DAN 151",subcategory:"Responsabilidades",explanation:"La normativa DAN 151 establece que el piloto a distancia es el responsable directo de la seguridad operacional durante el vuelo.",reference:"DAN 151",difficulty:1},
+{id:"Q088",prompt:"¿En qué condiciones se exceptúa el control manual del RPA según la DAN 151?\nI. Operaciones fotogramétricas de cartografía\nII. Operaciones de filmación general en VLOS\nIII. Operaciones de aspersión agrícola\nIV. Operaciones con sensores LIDAR u otros escáneres de nubes de puntos",options:["Sólo II y IV","Sólo I, II y IV","Sólo I, III y IV","I, II, III y IV"],answerIndex:2,category:"DAN 151",subcategory:"Control manual",explanation:"La norma exceptúa el control manual en fotogrametría/cartografía, aspersión agrícola y uso de sensores LIDAR. La filmación general en VLOS no aplica como excepción.",reference:"DAN 151",difficulty:2},
+{id:"Q089",prompt:"Según la norma DAN 151, un piloto a distancia podrá:",options:["Operar en zonas prohibidas y zonas peligrosas publicadas por la DGAC","Operar en zonas restringidas, sin autorización de la DGAC","Operar en la noche con una autorización especial de la DGAC","Operar sin tomar conocimiento de los NOTAMs vigentes publicados por la DGAC"],answerIndex:2,category:"DAN 151",subcategory:"Permisos especiales",explanation:"La operación nocturna de RPAS solo es posible con una autorización especial emitida por la DGAC.",reference:"DAN 151",difficulty:2},
+{id:"Q090",prompt:"Según la norma DAN 151, un piloto a distancia NO podrá:\nI. Operar más de un RPA en forma simultánea\nII. Operar bajo la influencia de las drogas o el alcohol\nIII. Operar en áreas donde se combate un incendio por medio de aeronaves tripuladas\nIV. Operar a una distancia de 1 km de la prolongación del eje de pista y a 2 km paralelo del eje",options:["Sólo I, II y III","Sólo II, III y IV","Sólo I, III y IV","I, II, III y IV"],answerIndex:0,category:"DAN 151",subcategory:"Prohibiciones",explanation:"La norma prohíbe: I) operar más de un RPA simultáneamente; II) operar bajo alcohol/drogas; III) operar en zonas de combate de incendios con aeronaves tripuladas. El punto IV tiene las distancias incorrectas.",reference:"DAN 151",difficulty:3},
+{id:"Q091",prompt:"Durante la operación del RPAS, el operador debe mantener un margen vertical de ___ mts y separación horizontal de ___ mts respecto a obstáculos y personas no involucradas.",options:["10 y 20","20 y 30","30 y 20","20 y 10"],answerIndex:1,category:"DAN 151",subcategory:"Separación",explanation:"El margen de seguridad establecido en la normativa es de 20 metros verticales y 30 metros horizontales respecto a obstáculos y personas.",reference:"DAN 151",difficulty:2},
+{id:"Q092",prompt:"El piloto a distancia deberá ceder el paso a cualquier aeronave tripulada en las diferentes fases del vuelo.",options:["Verdadero","Falso"],answerIndex:0,category:"DAN 151",subcategory:"Anticolisión",explanation:"Los RPAS siempre deben dar prioridad (ceder el paso) a aeronaves tripuladas y mantener separación segura para evitar colisiones.",reference:"DAN 151",difficulty:1},
+{id:"Q093",prompt:"Además de los requisitos técnicos de la DAN 151 para vuelos en zonas urbanas:\nI. Sólo se podrá volar hasta 30 metros horizontalmente de una persona ajena a la operación\nII. Sólo se podrá operar en condiciones BVLOS\nIII. Para vuelos encima de 120 mts (400 pies) se deberá obtener autorización de la DGAC.",options:["Sólo I y II","Sólo II y III","Sólo I y III","I, II y III"],answerIndex:2,category:"DAN 151",subcategory:"Vuelos urbanos",explanation:"I y III son correctas. La DAN 151 no permite BVLOS en zonas urbanas sin autorización especial (punto II es falso).",reference:"DAN 151",difficulty:2},
+{id:"Q094",prompt:"Según la norma DAN 151, los vuelos bajo techo con RPAS son considerados como operación aérea.",options:["Verdadero","Falso"],answerIndex:1,category:"DAN 151",subcategory:"Ámbito de aplicación",explanation:"Los vuelos bajo techo (en espacios cerrados) no son considerados operación aérea según la DAN 151, ya que se desarrollan fuera del espacio aéreo.",reference:"DAN 151",difficulty:1},
+{id:"Q095",prompt:"Según la norma DAN 151, todo propietario que desee operar deberá inscribir la aeronave en el Registro Especial de RPA de la DGAC antes de iniciar operaciones.",options:["Verdadero","Falso"],answerIndex:0,category:"DAN 151",subcategory:"Registro",explanation:"La inscripción en el Registro Especial de RPA de la DGAC es un requisito obligatorio previo a cualquier operación.",reference:"DAN 151",difficulty:1},
+{id:"Q096",prompt:"Según la norma DAN 151, ¿cuál es la información técnica para inscribir la aeronave?\nI. Fabricante, país\nII. Marca, modelo y número de serie\nIII. Color y tipo de material de la aeronave\nIV. Peso de fábrica",options:["Sólo I y II","Sólo I, II y III","Sólo I, II y IV","I, II, III y IV"],answerIndex:2,category:"DAN 151",subcategory:"Registro",explanation:"El registro exige fabricante, país de fabricación, marca, modelo, número de serie y peso de fábrica. El color y tipo de material no son datos requeridos.",reference:"DAN 151",difficulty:2},
+{id:"Q097",prompt:"Según la norma DAN 151, uno de los requisitos para la obtención de la credencial de operador de RPAS es:",options:["Tener menos de 18 años de edad","Aprobar el examen escrito sólo de materias de la normativa aeronáutica","Presentar declaración jurada simple firmada con huella digital de haber recibido instrucción teórica y práctica, acompañado del certificado de la empresa que impartió la instrucción","Obtener una calificación mínima de aprobación de los exámenes de 70%"],answerIndex:2,category:"DAN 151",subcategory:"Credencial",explanation:"La norma exige presentar una declaración jurada con huella digital, junto con el certificado de la empresa que impartió la instrucción teórica y práctica.",reference:"DAN 151, Apéndice C",difficulty:2},
+{id:"Q098",prompt:"Según la norma DAN 151, la duración de la credencial de operador de RPA será de:",options:["12 meses","24 meses","36 meses","6 meses"],answerIndex:2,category:"DAN 151",subcategory:"Credencial",explanation:"La credencial de operador de RPA tiene una vigencia de 36 meses (3 años) según la norma DAN 151.",reference:"DAN 151",difficulty:1},
+{id:"Q099",prompt:"Para la obtención y revalidación de la credencial se deberá aprobar un examen escrito sobre las siguientes materias:",options:["DAN 151, DAN 91, NOTAMs, meteorología y aerodinámica","DAN 151, meteorología, aerodinámica y operaciones aéreas","DAN 151, NOTAMs, meteorología y operaciones aéreas","DAN 151, DAN 91, meteorología, aerodinámica y operaciones aéreas"],answerIndex:0,category:"DAN 151",subcategory:"Credencial",explanation:"La prueba teórica para la credencial incluye: DAN 151, DAN 91, NOTAMs, meteorología y aerodinámica.",reference:"DAN 151, DAN 91",difficulty:2},
+{id:"Q100",prompt:"El plazo para enviar las solicitudes de operación según DAN 91 y DAN 151 es de:",options:["10 días hábiles","5 días hábiles","15 días hábiles","7 días hábiles"],answerIndex:3,category:"Normativa",subcategory:"Plazos",explanation:"La normativa establece un plazo de 7 días hábiles para presentar las solicitudes de operación ante la DGAC.",reference:"DAN 91, Anexo D / DAN 151, Apéndice A",difficulty:2},
+];
+
+// ═══════════════════════════════════════════
+// ESTADO DE LA APP
+// ═══════════════════════════════════════════
+let S = {
+  mode: 'practica',
+  qCount: 10,
+  idx: 0,
+  qs: [],
+  ans: [],        // null | { sel: number, ok: boolean }
+  timerInterval: null,
+  tLeft: 3600,
+  cfg: { timer: true, qid: true },
+  hist: [],
+  fails: []
+};
+
+const CAT_IC = {
+  'Meteorología': '<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/>',
+  'DAN 151':      '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h4"/>',
+  'DAN 91':       '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+  'Normativa':    '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  'Aerodinámica': '<path d="M22 16.74V18a2 2 0 0 1-2.74 1.84L12 17.16l-7.26 2.68A2 2 0 0 1 2 18v-1.26A2 2 0 0 1 3.1 14.8L12 12l8.9 2.8A2 2 0 0 1 22 16.74z"/>',
+  'METAR':        '<path d="M8 19H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5"/><path d="M8 11h8M8 15h3"/><path d="M15 17l2 2 4-4"/>',
+  'Definiciones': '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+  'Espacio Aéreo':'<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+  'Operación':    '<path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 12h8M12 8v8"/>',
+  'Seguridad Operacional': '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>',
+};
+
+// ═══════════════════════════════════════════
+// PERSISTENCIA
+// ═══════════════════════════════════════════
+function loadS() {
+  try {
+    const h = localStorage.getItem('ad2_h'); if (h) S.hist = JSON.parse(h);
+    const f = localStorage.getItem('ad2_f'); if (f) S.fails = JSON.parse(f);
+    const c = localStorage.getItem('ad2_c'); if (c) S.cfg = { ...S.cfg, ...JSON.parse(c) };
+  } catch (e) {}
+}
+function saveS() {
+  try {
+    localStorage.setItem('ad2_h', JSON.stringify(S.hist));
+    localStorage.setItem('ad2_f', JSON.stringify(S.fails));
+    localStorage.setItem('ad2_c', JSON.stringify(S.cfg));
+  } catch (e) {}
+}
+loadS();
+
+// ═══════════════════════════════════════════
+// NAVEGACIÓN
+// ═══════════════════════════════════════════
+function nav(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(x => x.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  const ni = document.querySelector(`.ni[data-s="${n}"]`);
+  if (ni) ni.classList.add('active');
+  document.getElementById('sidebar').classList.remove('open');
+  if (n === 'estadisticas') renderStats();
+  if (n === 'categorias') renderCats();
+  if (n === 'historial') renderHist();
+  if (n === 'ajustes') renderCfg();
+}
+function toggleSb() { document.getElementById('sidebar').classList.toggle('open'); }
+
+// ═══════════════════════════════════════════
+// INICIO
+// ═══════════════════════════════════════════
+function selMode(m) {
+  S.mode = m;
+  document.querySelectorAll('.mc').forEach(c => c.classList.toggle('sel', c.dataset.mode === m));
+}
+function selQ(n) {
+  S.qCount = n;
+  document.querySelectorAll('.q-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.q) === n));
+}
+function shuf(a) { return [...a].sort(() => Math.random() - .5); }
+
+// ═══════════════════════════════════════════
+// INICIAR QUIZ
+// ═══════════════════════════════════════════
+function startQuiz() {
+  let pool = [...QUESTIONS];
+  if (S.mode === 'falladas') {
+    if (!S.fails.length) { alert('¡Sin preguntas falladas aún! Realiza una prueba primero.'); return; }
+    pool = QUESTIONS.filter(q => S.fails.includes(q.id));
+  }
+  pool = shuf(pool).slice(0, Math.min(S.qCount, pool.length));
+
+  // Reiniciar estado limpiamente
+  S.qs = pool;
+  S.ans = new Array(pool.length).fill(null);
+  S.idx = 0;
+
+  document.getElementById('nav-quiz').style.display = '';
+  document.getElementById('nav-res').style.display = 'none';
+
+  const lb = { practica: 'PRÁCTICA', examen: 'EXAMEN', falladas: 'FALLADAS', aleatorio: 'ALEATORIO' };
+  document.getElementById('q-mbadge').textContent = lb[S.mode] || S.mode.toUpperCase();
+
+  if (S.mode === 'examen' && S.cfg.timer) {
+    S.tLeft = 3600;
+    document.getElementById('timer').style.display = 'flex';
+    startTimer();
+  } else {
+    document.getElementById('timer').style.display = 'none';
+    clearInterval(S.timerInterval);
+  }
+
+  document.getElementById('prog-pill').style.display = 'flex';
+  renderQ();
+  nav('quiz');
+}
+
+function startTimer() {
+  clearInterval(S.timerInterval);
+  S.timerInterval = setInterval(() => {
+    S.tLeft--;
+    const m = String(Math.floor(S.tLeft / 60)).padStart(2, '0');
+    const s = String(S.tLeft % 60).padStart(2, '0');
+    document.getElementById('t-txt').textContent = `${m}:${s}`;
+    const el = document.getElementById('timer');
+    el.className = 'timer';
+    if (S.tLeft <= 300) el.classList.add('warn');
+    if (S.tLeft <= 60) el.classList.add('crit');
+    if (S.tLeft <= 0) { clearInterval(S.timerInterval); finishQuiz(); }
+  }, 1000);
+}
+
+// ═══════════════════════════════════════════
+// RENDERIZAR PREGUNTA
+// ═══════════════════════════════════════════
+function renderQ() {
+  const q = S.qs[S.idx];
+  const tot = S.qs.length;
+  const answered = S.ans.filter(a => a !== null).length;
+
+  // Contadores
+  document.getElementById('q-cur').textContent = S.idx + 1;
+  document.getElementById('q-tot').textContent = tot;
+  document.getElementById('q-answered').textContent = `${answered} respondida${answered !== 1 ? 's' : ''}`;
+
+  // Barra de progreso = posición en el quiz
+  const pct = Math.round((S.idx / tot) * 100);
+  document.getElementById('pbar').style.width = pct + '%';
+  document.getElementById('pill-pct').textContent = Math.round((answered / tot) * 100) + '%';
+
+  // Datos de la pregunta
+  document.getElementById('q-id').style.display = S.cfg.qid ? '' : 'none';
+  document.getElementById('q-id').textContent = q.id;
+  document.getElementById('q-cat').textContent = q.category + (q.subcategory ? ' · ' + q.subcategory : '');
+  document.getElementById('q-txt').textContent = q.prompt;
+
+  // Opciones
+  const ol = document.getElementById('opts');
+  ol.innerHTML = '';
+  const L = ['A', 'B', 'C', 'D', 'E'];
+
+  q.options.forEach((opt, i) => {
+    const d = document.createElement('div');
+    d.className = 'opt';
+    d.dataset.i = i;
+    d.innerHTML = `<div class="opt-l">${L[i]}</div><div class="opt-txt">${opt}</div>`;
+    d.onclick = () => selAns(i);
+    ol.appendChild(d);
+  });
+
+  // Feedback limpio
+  const fb = document.getElementById('fb');
+  fb.className = 'fb';
+  fb.innerHTML = '';
+
+  // Si ya hay respuesta, restaurar estado visual
+  const prevAns = S.ans[S.idx];
+  if (prevAns !== null) {
+    document.querySelectorAll('.opt').forEach(el => {
+      const oi = parseInt(el.dataset.i);
+      el.classList.add('dis');
+      el.onclick = null;
+
+      // === FIX MODO EXAMEN: en examen solo mostrar selección, sin revelar correcta ===
+      if (S.mode === 'examen') {
+        if (oi === prevAns.sel) el.classList.add('sel-only');
+      } else {
+        // Modo práctica: mostrar verde/rojo
+        if (oi === q.answerIndex) el.classList.add('ok');
+        if (oi === prevAns.sel && prevAns.sel !== q.answerIndex) el.classList.add('err');
+      }
+    });
+    if (S.mode === 'practica') showFb(prevAns.ok, q);
+  }
+
+  // Botones de navegación
+  document.getElementById('btn-prev').disabled = S.idx === 0;
+  const bn = document.getElementById('btn-next');
+  if (S.idx === tot - 1) {
+    bn.innerHTML = 'Ver resultados<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>';
+    bn.onclick = () => finishQuiz();
+  } else {
+    bn.innerHTML = 'Siguiente<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>';
+    bn.onclick = () => nextQ();
+  }
+}
+
+// ═══════════════════════════════════════════
+// SELECCIONAR RESPUESTA
+// ═══════════════════════════════════════════
+function selAns(i) {
+  if (S.ans[S.idx] !== null) return; // ya respondida
+  const q = S.qs[S.idx];
+  const ok = i === q.answerIndex;
+  S.ans[S.idx] = { sel: i, ok };
+
+  // Actualizar contador de respondidas
+  const answered = S.ans.filter(a => a !== null).length;
+  document.getElementById('q-answered').textContent = `${answered} respondida${answered !== 1 ? 's' : ''}`;
+  document.getElementById('pill-pct').textContent = Math.round((answered / S.qs.length) * 100) + '%';
+
+  document.querySelectorAll('.opt').forEach(el => {
+    el.classList.add('dis');
+    el.onclick = null;
+    const oi = parseInt(el.dataset.i);
+
+    // === FIX MODO EXAMEN: solo marcar la selección, sin verde ni rojo ===
+    if (S.mode === 'examen') {
+      if (oi === i) el.classList.add('sel-only');
+    } else {
+      // Modo práctica: feedback visual inmediato
+      if (oi === q.answerIndex) el.classList.add('ok');
+      if (oi === i && !ok) el.classList.add('err');
+    }
+  });
+
+  if (S.mode === 'practica') showFb(ok, q);
+}
+
+function showFb(ok, q) {
+  const fb = document.getElementById('fb');
+  fb.className = 'fb show ' + (ok ? 'ok-fb' : 'err-fb');
+  fb.innerHTML = `
+    <div class="fb-lbl">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        ${ok ? '<polyline points="20 6 9 17 4 12"/>' : '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'}
+      </svg>
+      ${ok ? '¡Correcto!' : 'Incorrecto'}
+    </div>
+    <div>${q.explanation}</div>
+    ${q.reference ? `<div class="fb-ref"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>${q.reference}</div>` : ''}
+  `;
+}
+
+function prevQ() { if (S.idx > 0) { S.idx--; renderQ(); } }
+function nextQ() { if (S.idx < S.qs.length - 1) { S.idx++; renderQ(); } }
+
+function askEnd() { document.getElementById('modal-ov').classList.add('show'); }
+function closeModal() { document.getElementById('modal-ov').classList.remove('show'); }
+function confirmEnd() {
+  closeModal();
+  clearInterval(S.timerInterval);
+  document.getElementById('prog-pill').style.display = 'none';
+  nav('inicio');
+}
+
+// ═══════════════════════════════════════════
+// FINALIZAR QUIZ
+// ═══════════════════════════════════════════
+function finishQuiz() {
+  clearInterval(S.timerInterval);
+  const tot = S.qs.length;
+
+  // === FIX: preguntas no respondidas = incorrectas ===
+  let ok = 0, err = 0, skip = 0;
+  S.qs.forEach((q, i) => {
+    const a = S.ans[i];
+    if (a === null) {
+      // No respondida: contar como incorrecta Y guardar en fallidas
+      skip++;
+      err++;
+      if (!S.fails.includes(q.id)) S.fails.push(q.id);
+    } else if (a.ok) {
+      ok++;
+      S.fails = S.fails.filter(id => id !== q.id); // remover de fallidas si ahora es correcta
+    } else {
+      err++;
+      if (!S.fails.includes(q.id)) S.fails.push(q.id);
+    }
+  });
+
+  const pct = Math.round((ok / tot) * 100);
+  const pass = pct >= 75;
+
+  // Guardar historial
+  S.hist.unshift({ date: new Date().toLocaleDateString('es-CL'), mode: S.mode, tot, ok, err, skip, pct, pass, ts: Date.now() });
+  if (S.hist.length > 50) S.hist.pop();
+  saveS();
+
+  // Actualizar UI resultados
+  document.getElementById('r-pct').textContent = pct + '%';
+  document.getElementById('r-pct').className = 'res-big ' + (pass ? 'pass' : 'fail');
+  document.getElementById('r-v').textContent = pass ? 'APROBADO' : 'REPROBADO';
+  document.getElementById('r-v').className = 'res-v ' + (pass ? 'pass' : 'fail');
+  document.getElementById('r-req').textContent = pass ? '¡Superaste el 75% requerido!' : 'Necesitas 75% para aprobar';
+  document.getElementById('r-ok').textContent = ok;
+  document.getElementById('r-err').textContent = err;
+  document.getElementById('r-skip').textContent = skip;
+  document.getElementById('r-tot').textContent = tot;
+
+  // Donut
+  const arc = document.getElementById('donut-arc');
+  arc.style.strokeDashoffset = 251.2 - (251.2 * pct / 100);
+  arc.setAttribute('stroke', pass ? '#22c55e' : '#ef4444');
+  document.getElementById('d-pct').textContent = pct + '%';
+
+  // Categorías y tip
+  const cats = {};
+  S.qs.forEach((q, i) => {
+    const a = S.ans[i];
+    if (!cats[q.category]) cats[q.category] = { c: 0, t: 0 };
+    cats[q.category].t++;
+    if (a && a.ok) cats[q.category].c++;
+  });
+  const worst = Object.entries(cats).sort((a, b) => (a[1].c / a[1].t) - (b[1].c / b[1].t))[0];
+  document.getElementById('r-tip').textContent = worst
+    ? `Tu categoría más débil es "${worst[0]}". ¡Refuerza ese tema antes del examen!`
+    : 'Repasa las preguntas incorrectas y refuerza tus conocimientos.';
+
+  renderRevTab(cats);
+  switchTab('rev');
+  document.getElementById('nav-res').style.display = '';
+  document.getElementById('prog-pill').style.display = 'none';
+  nav('resultados');
+}
+
+// ═══════════════════════════════════════════
+// REVISIÓN DE RESPUESTAS
+// ═══════════════════════════════════════════
+function renderRevTab(cats) {
+  const rv = document.getElementById('tab-rev');
+  rv.innerHTML = '';
+  S.qs.forEach((q, i) => {
+    const a = S.ans[i];
+    const isOk = a && a.ok;
+    const isSkip = a === null;
+
+    let iconClass, iconPath, badgeClass, badgeText, selText;
+    if (isOk) {
+      iconClass = 'ok'; iconPath = '<polyline points="20 6 9 17 4 12"/>';
+      badgeClass = 'c'; badgeText = 'Correcta';
+      selText = q.options[a.sel];
+    } else if (isSkip) {
+      iconClass = 'skip'; iconPath = '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+      badgeClass = 's'; badgeText = 'Omitida';
+      selText = '<em style="color:var(--yellow)">No respondida</em>';
+    } else {
+      iconClass = 'err'; iconPath = '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>';
+      badgeClass = 'w'; badgeText = 'Incorrecta';
+      selText = q.options[a.sel];
+    }
+
+    const d = document.createElement('div');
+    d.className = 'rev-item';
+    d.innerHTML = `
+      <div class="rev-hdr" onclick="togRev(this)">
+        <div class="rev-icon ${iconClass}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${iconPath}</svg>
+        </div>
+        <div class="rev-meta">
+          <div class="rev-qid">${q.id} · ${q.category}</div>
+          <div class="rev-txt">${q.prompt.split('\n')[0]}</div>
+        </div>
+        <div class="rev-badge ${badgeClass}">${badgeText}</div>
+        <span class="chev">›</span>
+      </div>
+      <div class="rev-body">
+        <div class="rev-ans"><strong>Tu respuesta:</strong> ${selText}</div>
+        <div class="rev-ans"><strong>Respuesta correcta:</strong> ${q.options[q.answerIndex]}</div>
+        <div class="rev-exp">${q.explanation}</div>
+        ${q.reference ? `<div class="rev-ref"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>${q.reference}</div>` : ''}
+      </div>`;
+    rv.appendChild(d);
+  });
+
+  // Tab de categorías
+  const cd = document.getElementById('tab-cats');
+  cd.innerHTML = '';
+  Object.entries(cats).sort((a, b) => (a[1].c / a[1].t) - (b[1].c / b[1].t)).forEach(([c, { c: ok, t }]) => {
+    const p = Math.round(ok / t * 100);
+    const col = p >= 75 ? '#22c55e' : p >= 50 ? '#f59e0b' : '#ef4444';
+    cd.innerHTML += `<div class="cat-r">
+      <div class="cat-n">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue2)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${CAT_IC[c] || '<rect x="3" y="3" width="18" height="18" rx="2"/>'}</svg>
+        ${c}
+      </div>
+      <div style="font-size:11px;color:var(--dim);min-width:30px">${ok}/${t}</div>
+      <div class="cat-bw"><div class="cat-b" style="width:${p}%;background:${col}"></div></div>
+      <div class="cat-p" style="color:${col}">${p}%</div>
+    </div>`;
+  });
+}
+
+function togRev(h) {
+  const item = h.closest('.rev-item');
+  const body = item.querySelector('.rev-body');
+  body.classList.toggle('open');
+  item.classList.toggle('open');
+}
+
+function switchTab(t) {
+  document.querySelectorAll('.rtab').forEach((x, i) =>
+    x.classList.toggle('active', (i === 0 && t === 'rev') || (i === 1 && t === 'cats')));
+  document.getElementById('tab-rev').style.display = t === 'rev' ? '' : 'none';
+  document.getElementById('tab-cats').style.display = t === 'cats' ? '' : 'none';
+}
+function retryFailed() { S.mode = 'falladas'; selMode('falladas'); startQuiz(); }
+
+// ═══════════════════════════════════════════
+// ESTADÍSTICAS
+// ═══════════════════════════════════════════
+function calcStreak() {
+  if (!S.hist.length) return 0;
+  const today = new Date().toLocaleDateString('es-CL');
+  const dates = [...new Set(S.hist.map(h => h.date))].sort().reverse();
+  let streak = 0, cur = today;
+  for (const d of dates) {
+    if (d === cur) {
+      streak++;
+      const dt = new Date(cur.split('/').reverse().join('-'));
+      dt.setDate(dt.getDate() - 1);
+      cur = dt.toLocaleDateString('es-CL');
+    } else break;
+  }
+  return streak;
+}
+
+function renderStats() {
+  const h = S.hist;
+  document.getElementById('st-tot').textContent = h.length;
+  document.getElementById('streak-n').textContent = calcStreak();
+  if (h.length) {
+    document.getElementById('st-avg').textContent = Math.round(h.reduce((s, x) => s + x.pct, 0) / h.length) + '%';
+    document.getElementById('st-best').textContent = Math.max(...h.map(x => x.pct)) + '%';
+  }
+  const el = document.getElementById('st-hist');
+  if (!h.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><p>Aún no has realizado ninguna prueba.</p></div>`;
+    return;
+  }
+  el.innerHTML = h.slice(0, 10).map(x =>
+    `<div class="h-item">
+      <div class="h-date">${x.date}</div>
+      <div class="h-mode">${x.mode.toUpperCase()} · ${x.tot} preguntas · ${x.ok}✓ ${x.err}✗</div>
+      <div class="h-pct ${x.pass ? 'p' : 'f'}">${x.pct}%</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+// CATEGORÍAS
+// ═══════════════════════════════════════════
+function renderCats() {
+  const cats = {};
+  QUESTIONS.forEach(q => { if (!cats[q.category]) cats[q.category] = 0; cats[q.category]++; });
+  document.getElementById('cat-grid').innerHTML = Object.entries(cats).map(([c, n]) => `
+    <div class="cat-card" onclick="startCat('${c.replace(/'/g, "\\'")}')">
+      <div class="cc-ic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          ${CAT_IC[c] || '<rect x="3" y="3" width="18" height="18" rx="2"/>'}
+        </svg>
+      </div>
+      <div class="cc-info"><h3>${c}</h3><p>Practicar esta categoría</p></div>
+      <div class="cc-n">${n}</div>
+    </div>`).join('');
+}
+
+function startCat(cat) {
+  const pool = QUESTIONS.filter(q => q.category === cat);
+  S.qs = shuf(pool).slice(0, Math.min(S.qCount, pool.length));
+  S.ans = new Array(S.qs.length).fill(null);
+  S.idx = 0;
+  S.mode = 'practica';
+  document.getElementById('q-mbadge').textContent = cat.toUpperCase();
+  document.getElementById('timer').style.display = 'none';
+  clearInterval(S.timerInterval);
+  document.getElementById('nav-quiz').style.display = '';
+  document.getElementById('prog-pill').style.display = 'flex';
+  renderQ();
+  nav('quiz');
+}
+
+// ═══════════════════════════════════════════
+// HISTORIAL
+// ═══════════════════════════════════════════
+function renderHist() {
+  const el = document.getElementById('hist-list');
+  if (!S.hist.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><p>Aún no tienes historial de pruebas.</p></div>`;
+    return;
+  }
+  el.innerHTML = S.hist.map(x =>
+    `<div class="h-item">
+      <div class="h-date">${x.date}</div>
+      <div class="h-mode">${x.mode.toUpperCase()} · ${x.tot} preguntas · ${x.ok || 0}✓ ${x.err || 0}✗${x.skip ? ` ${x.skip}⊘` : ''}</div>
+      <div class="h-pct ${x.pass ? 'p' : 'f'}">${x.pct}%</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+// AJUSTES
+// ═══════════════════════════════════════════
+function renderCfg() {
+  document.getElementById('tog-timer').className = 'tog' + (S.cfg.timer ? ' on' : '');
+  document.getElementById('tog-qid').className = 'tog' + (S.cfg.qid ? ' on' : '');
+}
+function togSet(k) { S.cfg[k] = !S.cfg[k]; renderCfg(); saveS(); }
+function clearData() {
+  if (confirm('¿Borrar todo el historial, estadísticas y preguntas falladas? Esta acción no se puede deshacer.')) {
+    S.hist = []; S.fails = []; saveS();
+    alert('Datos borrados correctamente.');
+  }
+}
+</script>
+</body>
+</html>
